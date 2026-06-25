@@ -1,0 +1,2 @@
+# Deprecated: Local Docker Compose infrastructure is no longer used.
+# The application now runs entirely in Spring Boot using Cloud Postgres and Cloud Kafka.

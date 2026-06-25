@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aether Guardian | Enterprise Fraud Detection Command Center</title>
+<meta name="description" content="Aether Guardian — AI-powered real-time fraud detection system with behavioral biometrics, explainable AI, graph network analysis, and full case management.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root{
+  --midnight:#020617;--navy:#0f172a;--navy2:#1e293b;--navy3:#263148;
+  --blue:#38BDF8;--blue-dim:rgba(56,189,248,0.10);--blue-glow:rgba(56,189,248,0.25);
+  --gold:#EAB308;--gold-dim:rgba(234,179,8,0.10);--gold-glow:rgba(234,179,8,0.25);
+  --green:#10B981;--green-dim:rgba(16,185,129,0.10);
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,0.10);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.10);--red-glow:rgba(239,68,68,0.25);
+  --purple:#a855f7;--purple-dim:rgba(168,85,247,0.10);
+  --font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--midnight);color:#e2e8f0;font-family:var(--font);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(56,189,248,0.06),transparent),linear-gradient(rgba(56,189,248,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.025) 1px,transparent 1px);background-size:100% 100%,48px 48px,48px 48px;pointer-events:none;z-index:0}
+.app{position:relative;z-index:1}
+
+/* ═══ VIEWS ═══════════════════════════════════════════════════ */
+.view{display:none;animation:fadeUp .4s ease forwards}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ AUTH ═════════════════════════════════════════════════════ */
+.auth-scene{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+.auth-card{background:rgba(15,23,42,0.9);backdrop-filter:blur(24px);border:1px solid rgba(56,189,248,0.18);border-radius:22px;padding:2.75rem 2.5rem;width:100%;max-width:440px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(56,189,248,0.05) inset}
+.auth-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:120px;background:radial-gradient(ellipse,rgba(56,189,248,0.15) 0%,transparent 70%);pointer-events:none}
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:.6rem;margin-bottom:2rem}
+.auth-logo-icon{width:68px;height:68px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(234,179,8,0.15),rgba(56,189,248,0.08));border:1px solid rgba(234,179,8,0.3);box-shadow:0 0 30px rgba(234,179,8,0.12)}
+.auth-logo-name{font-size:1.5rem;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,var(--gold),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-logo-sub{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--blue);opacity:.7}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.7px;color:#64748b;font-weight:700;margin-bottom:.45rem}
+.iw{position:relative}
+.iw svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#475569;pointer-events:none;width:15px;height:15px}
+input{width:100%;padding:.78rem 1rem .78rem 2.4rem;background:rgba(2,6,23,0.7);border:1px solid rgba(255,255,255,0.07);border-radius:11px;color:#e2e8f0;font-family:var(--font);font-size:.88rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim)}
+input::placeholder{color:#2d3f5f}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem 1.4rem;border-radius:11px;font-family:var(--font);font-weight:700;font-size:.88rem;border:none;cursor:pointer;transition:all .22s;white-space:nowrap}
+.btn:disabled{opacity:.55;cursor:not-allowed!important;transform:none!important}
+.btn-full{width:100%}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#0ea5e9);color:var(--midnight)}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(56,189,248,.35)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#ca8a04);color:var(--midnight)}
+.btn-gold:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(234,179,8,.35)}
+.btn-sm{padding:.4rem .85rem;font-size:.75rem;border-radius:8px}
+.btn-ghost{background:rgba(255,255,255,.04);color:#94a3b8;border:1px solid rgba(255,255,255,.07)}
+.btn-ghost:hover{background:rgba(255,255,255,.08);color:#e2e8f0}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.btn-red:hover{background:var(--red);color:#fff}
+.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.btn-green:hover{background:var(--green);color:#fff}
+.btn-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,.2)}
+
+.alert{display:none;align-items:flex-start;gap:.6rem;padding:.8rem 1rem;border-radius:10px;font-size:.8rem;margin-bottom:1rem;line-height:1.5}
+.alert.show{display:flex}
+.alert-err{color:var(--red);background:var(--red-dim);border:1px solid rgba(239,68,68,.2)}
+.alert-ok{color:var(--green);background:var(--green-dim);border:1px solid rgba(16,185,129,.2)}
+.auth-footer{text-align:center;margin-top:1.5rem;font-size:.82rem;color:#475569}
+.link{color:var(--blue);cursor:pointer;font-weight:600}
+.link:hover{text-decoration:underline}
+
+/* ═══ DASHBOARD LAYOUT ═══════════════════════════════════════ */
+.dash{max-width:1300px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:rgba(15,23,42,0.8);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.05);position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:.85rem}
+.brand-icon{padding:.6rem;border-radius:12px;background:var(--gold-dim);border:1px solid rgba(234,179,8,.2)}
+.brand-name{font-size:1.2rem;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,var(--gold),#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.brand-sub{font-size:.62rem;color:var(--blue);letter-spacing:1px;font-weight:600;opacity:.8}
+.hdr-right{display:flex;align-items:center;gap:.75rem}
+.operative{padding:.35rem .85rem;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:8px;font-size:.75rem}
+.operative strong{color:#fff;margin-left:.3rem}
+
+/* Nav Tabs */
+.nav-tabs{display:flex;gap:.25rem;padding:.75rem 1.5rem .5rem;border-bottom:1px solid rgba(255,255,255,.04);overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab{padding:.5rem 1.1rem;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;color:#64748b;border:1px solid transparent;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:.45rem}
+.tab:hover{color:#94a3b8;background:rgba(255,255,255,.03)}
+.tab.active{color:var(--blue);background:var(--blue-dim);border-color:rgba(56,189,248,.18)}
+.tab-panel{display:none;animation:fadeUp .3s ease}
+.tab-panel.active{display:block}
+
+/* ═══ STATS ═══════════════════════════════════════════════════ */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.5rem;margin-top:1.5rem}
+.stat{background:rgba(15,23,42,0.75);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s}
+.stat:hover{transform:translateY(-2px)}
+.stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat.s-blue::after{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.stat.s-gold::after{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.stat.s-green::after{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.stat.s-red::after{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.stat.s-purple::after{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
+.stat-label{font-size:.68rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:.35rem}
+.stat-val{font-size:1.65rem;font-weight:800;line-height:1}
+.stat-bg{position:absolute;top:10px;right:12px;opacity:.06}
+
+/* ═══ PANELS ══════════════════════════════════════════════════ */
+.panel{background:rgba(15,23,42,0.75);border-radius:16px;padding:1.4rem;border:1px solid rgba(255,255,255,.05)}
+.panel-b{border-color:rgba(56,189,248,.12)}
+.panel-g{border-color:rgba(234,179,8,.12)}
+.panel-r{border-color:rgba(239,68,68,.12)}
+.panel-p{border-color:rgba(168,85,247,.12)}
+.ph{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.ph-title{font-size:.95rem;font-weight:700}
+.ph-badge{margin-left:auto;padding:.15rem .6rem;border-radius:20px;font-size:.68rem;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+
+/* ═══ TRANSACTION TABLE ════════════════════════════════════════ */
+.tw{overflow-x:auto;margin-top:.75rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{text-align:left;padding:.7rem 1rem;color:#475569;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap}
+tbody tr{transition:background .15s;cursor:pointer}
+tbody tr:hover{background:rgba(56,189,248,.04)}
+tbody td{padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+.tx-id{color:var(--blue);font-family:var(--mono);font-size:.78rem;font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:.18rem .6rem;border-radius:6px;font-size:.68rem;font-weight:700;border:1px solid transparent;white-space:nowrap}
+.badge-approved{color:var(--green);background:var(--green-dim);border-color:rgba(16,185,129,.2)}
+.badge-suspicious{color:var(--amber);background:var(--amber-dim);border-color:rgba(245,158,11,.2)}
+.badge-fraud{color:var(--red);background:var(--red-dim);border-color:rgba(239,68,68,.2)}
+.badge-pending{color:var(--blue);background:var(--blue-dim);border-color:rgba(56,189,248,.2)}
+.badge-suspended{color:#ff6b9d;background:rgba(255,107,157,.1);border-color:rgba(255,107,157,.2)}
+
+/* ═══ FILTER BAR ══════════════════════════════════════════════ */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem;padding:.85rem 1rem;background:rgba(2,6,23,0.5);border-radius:12px;border:1px solid rgba(255,255,255,.05)}
+.filter-bar select{padding:.4rem .75rem;background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer}
+.filter-bar input{padding:.4rem .75rem .4rem .75rem;width:auto;font-size:.78rem}
+.filter-bar label{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:#64748b;font-weight:600}
+
+/* ═══ REASON CODES ════════════════════════════════════════════ */
+.reason-list{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}
+.reason-pill{padding:.3rem .7rem;border-radius:8px;font-size:.72rem;font-family:var(--mono);line-height:1.4}
+.reason-high{background:rgba(239,68,68,.1);color:#fca5a5;border-left:3px solid var(--red)}
+.reason-med{background:rgba(245,158,11,.1);color:#fcd34d;border-left:3px solid var(--amber)}
+.reason-low{background:rgba(56,189,248,.08);color:#7dd3fc;border-left:3px solid var(--blue)}
+
+/* ═══ CASE MODAL ══════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--navy);border:1px solid rgba(56,189,248,.2);border-radius:20px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease}
+.modal-header{padding:1.4rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--navy);z-index:1}
+.modal-body{padding:1.5rem}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:.6rem;justify-content:flex-end}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem .5rem;font-size:.82rem}
+.detail-grid dt{color:#64748b;font-weight:600}
+.detail-grid dd{color:#e2e8f0;font-family:var(--mono);font-size:.78rem}
+.section-title{font-size:.72rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#64748b;margin:1.2rem 0 .6rem}
+
+/* ═══ BIOMETRIC INDICATOR ═════════════════════════════════════ */
+.bio-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:.3rem}
+.bio-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.bio-row{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.2rem}
+
+/* ═══ GRAPH (Fraud Ring) ══════════════════════════════════════ */
+#ring-canvas{width:100%;height:340px;border-radius:12px;background:rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,.05);position:relative;overflow:hidden}
+.ring-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:.25rem;cursor:pointer}
+.ring-node-circle{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;font-family:var(--mono);border:2px solid}
+.ring-line{position:absolute;transform-origin:left center;pointer-events:none}
+.ring-label{font-size:.6rem;font-weight:700;text-align:center;max-width:60px;word-break:break-all}
+
+/* ═══ SHADOW MODE ═════════════════════════════════════════════ */
+.shadow-toggle{display:flex;align-items:center;gap:.75rem;padding:1rem 1.2rem;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.18);border-radius:12px;cursor:pointer;transition:background .2s}
+.shadow-toggle:hover{background:rgba(168,85,247,.1)}
+.toggle-sw{width:44px;height:24px;border-radius:12px;background:rgba(255,255,255,.1);position:relative;transition:background .25s;flex-shrink:0}
+.toggle-sw.on{background:var(--purple)}
+.toggle-sw::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .25s}
+.toggle-sw.on::after{transform:translateX(20px)}
+.shadow-label{font-size:.85rem;font-weight:600}
+.shadow-sublabel{font-size:.72rem;color:#64748b}
+
+/* ═══ STATUS LIGHTS ═══════════════════════════════════════════ */
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ═══ EMPTY STATE ═════════════════════════════════════════════ */
+.empty{text-align:center;padding:3rem 1rem;color:#2d3f5f;display:flex;flex-direction:column;align-items:center;gap:.75rem}
+.empty p{font-size:.82rem;color:#475569}
+
+/* ═══ SPINNER ════════════════════════════════════════════════ */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .7s linear infinite}
+
+/* ═══ TOASTS ══════════════════════════════════════════════════ */
+.toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;gap:.4rem;z-index:999}
+.toast{padding:.65rem 1.1rem;border-radius:10px;font-size:.78rem;font-weight:600;backdrop-filter:blur(12px);animation:fadeUp .3s ease;display:flex;align-items:center;gap:.5rem;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.toast-ok{background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.3);color:var(--green)}
+.toast-err{background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.toast-warn{background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.3);color:var(--amber)}
+.toast-info{background:rgba(56,189,248,.18);border:1px solid rgba(56,189,248,.3);color:var(--blue)}
+
+/* ═══ MISC UTILITIES ══════════════════════════════════════════ */
+.mono{font-family:var(--mono)}
+.text-blue{color:var(--blue)}
+.text-gold{color:var(--gold)}
+.text-green{color:var(--green)}
+.text-red{color:var(--red)}
+.text-amber{color:var(--amber)}
+.text-purple{color:var(--purple)}
+.text-muted{color:#64748b}
+.fw-700{font-weight:700}
+.fw-800{font-weight:800}
+hr.divider{border:none;border-top:1px solid rgba(255,255,255,.06);margin:.75rem 0}
+
+@media(max-width:700px){
+  .grid2,.grid3{grid-template-columns:1fr}
+  .header{padding:.75rem 1rem}
+  .nav-tabs{padding:.5rem 1rem .25rem}
+  .dash{padding:1rem .75rem 3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!-- ║                  LOGIN                       ║ -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<div id="view-login" class="view active">
+  <div class="auth-scene">
+    <div class="auth-card">
+      <div class="auth-glow"></div>
+      <div class="auth-logo">
+        <div class="auth-logo-icon">
+          <i data-lucide="shield" style="width:36px;height:36px;color:var(--gold);filter:drop-shadow(0 0 10px var(--gold))"></i>
+        </div>
+        <div class="auth-logo-name">AETHER GUARDIAN</div>
+        <div class="auth-logo-sub">Enterprise Fraud Detection</div>
+      </div>
+      <div id="l-err" class="alert alert-err"><i data-lucide="alert-triangle" style="width:14px;height:14px;flex-shrink:0"></i><span id="l-err-msg"></span></div>
+      <form id="login-form">
+        <div class="field"><label>Operative Username</label><div class="iw"><i data-lucide="user"></i><input type="text" id="l-u" placeholder="Enter username" autocomplete="username"></div></div>
+        <div class="field"><label>Security Passphrase</label><div class="iw"><i data-lucide="lock"></i><input type="password" id="l-p" placeholder="••••••••" autocomplete="current-password"></div></div>
+        <button type="submit" class="btn btn-primary btn-full" id="l-btn">
+          <i data-lucide="shield-check" style="width:15px;height:15px"></i> Initialize Session
+        </button>
+      </form>
+      <div class="auth-footer">New Operative? <span class="link" onclick="go('signup')">Register Identity</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!-- ║                  SIGNUP                      ║ -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<div id="view-signup" class="view">
+  <div class="auth-scene">
+    <div class="auth-card">
+      <div class="auth-glow" style="background:radial-gradient(ellipse,rgba(234,179,8,0.15) 0%,transparent 70%)"></div>
+      <div class="auth-logo">
+        <div class="auth-logo-icon" style="background:linear-gradient(135deg,rgba(234,179,8,0.15),rgba(234,179,8,0.05));border-color:rgba(234,179,8,.3)">
+          <i data-lucide="user-plus" style="width:34px;height:34px;color:var(--gold);filter:drop-shadow(0 0 8px var(--gold))"></i>
+        </div>
+        <div class="auth-logo-name">NEW DEPLOYMENT</div>
+        <div class="auth-logo-sub">Create Operative Profile</div>
+      </div>
+      <div id="su-err" class="alert alert-err"><i data-lucide="shield-alert" style="width:14px;height:14px;flex-shrink:0"></i><span id="su-err-msg"></span></div>
+      <div id="su-ok" class="alert alert-ok"><i data-lucide="check-circle" style="width:14px;height:14px;flex-shrink:0"></i><span>Registered! Redirecting...</span></div>
+      <form id="signup-form">
+        <div class="grid2">
+          <div class="field"><label>Username *</label><div class="iw"><i data-lucide="user"></i><input type="text" id="su-u" placeholder="agent_k" autocomplete="username"></div></div>
+          <div class="field"><label>Email *</label><div class="iw"><i data-lucide="mail"></i><input type="email" id="su-e" placeholder="you@agency.gov" autocomplete="email"></div></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Phone</label><div class="iw"><i data-lucide="phone"></i><input type="text" id="su-ph" placeholder="+1 555 123 4567"></div></div>
+          <div class="field"><label>Home City</label><div class="iw"><i data-lucide="map-pin"></i><input type="text" id="su-hb" placeholder="New York"></div></div>
+        </div>
+        <div class="field"><label>Passphrase *</label><div class="iw"><i data-lucide="lock"></i><input type="password" id="su-p" placeholder="Min 4 characters" autocomplete="new-password"></div></div>
+        <button type="submit" class="btn btn-gold btn-full" id="su-btn"><i data-lucide="user-plus" style="width:15px;height:15px"></i> Authorize Identity</button>
+      </form>
+      <div class="auth-footer">Already cleared? <span class="link" onclick="go('login')">Access Portal</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!-- ║                DASHBOARD                     ║ -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<div id="view-dashboard" class="view">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon"><i data-lucide="shield" style="width:22px;height:22px;color:var(--gold);filter:drop-shadow(0 0 6px var(--gold))"></i></div>
+      <div><div class="brand-name">AETHER GUARDIAN</div><div class="brand-sub">Command Center · All Systems Operational</div></div>
+    </div>
+    <div class="hdr-right">
+      <div style="display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--green)"><div class="live-dot"></div>LIVE</div>
+      <div class="operative"><span style="color:#64748b">Operative:</span><strong id="dash-user">—</strong></div>
+      <button class="btn btn-sm btn-ghost" onclick="logout()"><i data-lucide="log-out" style="width:13px;height:13px"></i> Exit</button>
+    </div>
+  </div>
+
+  <!-- Nav Tabs -->
+  <div class="nav-tabs">
+    <div class="tab active" onclick="switchTab('overview')" id="tab-overview"><i data-lucide="layout-dashboard" style="width:14px;height:14px"></i>Overview</div>
+    <div class="tab" onclick="switchTab('transactions')" id="tab-transactions"><i data-lucide="activity" style="width:14px;height:14px"></i>Live Stream</div>
+    <div class="tab" onclick="switchTab('cases')" id="tab-cases"><i data-lucide="folder-open" style="width:14px;height:14px"></i>Case Management</div>
+    <div class="tab" onclick="switchTab('rings')" id="tab-rings"><i data-lucide="share-2" style="width:14px;height:14px"></i>Fraud Rings</div>
+    <div class="tab" onclick="switchTab('simulator')" id="tab-simulator"><i data-lucide="terminal" style="width:14px;height:14px"></i>Simulator</div>
+    <div class="tab" onclick="switchTab('shadow')" id="tab-shadow"><i data-lucide="eye" style="width:14px;height:14px"></i>Shadow Mode</div>
+    <div class="tab" onclick="switchTab('audit')" id="tab-audit"><i data-lucide="file-text" style="width:14px;height:14px"></i>Audit Log</div>
+  </div>
+
+  <div class="dash">
+
+    <!-- ━━━━━ OVERVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel active" id="panel-overview">
+      <div class="stats">
+        <div class="stat s-blue"><div class="stat-bg"><i data-lucide="activity" style="width:48px;height:48px;color:var(--blue)"></i></div><div class="stat-label">Total Transactions</div><div class="stat-val text-blue" id="s-total">0</div></div>
+        <div class="stat s-green"><div class="stat-bg"><i data-lucide="check-circle" style="width:48px;height:48px;color:var(--green)"></i></div><div class="stat-label">Approved</div><div class="stat-val text-green" id="s-approved">0</div></div>
+        <div class="stat s-amber" style="--c:var(--amber)"><div class="stat-bg"><i data-lucide="alert-circle" style="width:48px;height:48px;color:var(--amber)"></i></div><div class="stat-label">Suspicious</div><div class="stat-val text-amber" id="s-suspicious">0</div></div>
+        <div class="stat s-red"><div class="stat-bg"><i data-lucide="flame" style="width:48px;height:48px;color:var(--red)"></i></div><div class="stat-label">Fraud Blocked</div><div class="stat-val text-red" id="s-fraud">0</div></div>
+        <div class="stat s-gold"><div class="stat-bg"><i data-lucide="dollar-sign" style="width:48px;height:48px;color:var(--gold)"></i></div><div class="stat-label">Protected Volume</div><div class="stat-val text-gold" id="s-amount">$0</div></div>
+        <div class="stat s-purple"><div class="stat-bg"><i data-lucide="users" style="width:48px;height:48px;color:var(--purple)"></i></div><div class="stat-label">Suspended Users</div><div class="stat-val text-purple" id="s-suspended">0</div></div>
+      </div>
+
+      <div class="grid2">
+        <!-- System Health -->
+        <div class="panel panel-b">
+          <div class="ph"><i data-lucide="cpu" style="color:var(--blue);width:18px;height:18px"></i><span class="ph-title text-blue">Intelligence Layers</span></div>
+          <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.8rem">
+            <div class="bio-row"><span>Base Rules Engine</span><span class="text-green fw-700">ACTIVE</span></div>
+            <div class="bio-row"><span>Velocity Analysis</span><span class="text-green fw-700">ACTIVE</span></div>
+            <div class="bio-row"><span>Behavioral Biometrics</span><span class="text-green fw-700">ACTIVE</span></div>
+            <div class="bio-row"><span>Device Intelligence</span><span class="text-green fw-700">ACTIVE</span></div>
+            <div class="bio-row"><span>GeoFencing / Impossible Travel</span><span class="text-green fw-700">ACTIVE</span></div>
+            <div class="bio-row"><span>Shadow Mode</span><span id="sys-shadow" class="text-muted fw-700">STANDBY</span></div>
+            <div class="bio-row"><span>Fraud Ring Detector</span><span class="text-green fw-700">ACTIVE</span></div>
+          </div>
+          <hr class="divider">
+          <div class="bio-row" style="font-size:.72rem"><span class="text-muted">Data Store</span><span class="mono text-blue">Browser LocalStorage</span></div>
+          <div class="bio-row" style="font-size:.72rem"><span class="text-muted">Event Bus</span><span class="mono text-blue">In-Memory Async Queue</span></div>
+        </div>
+
+        <!-- Recent alerts -->
+        <div class="panel panel-r">
+          <div class="ph"><i data-lucide="bell" style="color:var(--red);width:18px;height:18px"></i><span class="ph-title text-red">Recent Alerts</span></div>
+          <div id="recent-alerts">
+            <div class="empty" style="padding:1.5rem"><i data-lucide="inbox" style="width:24px;height:24px;color:#1e293b"></i><p>No alerts yet</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━ LIVE STREAM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel" id="panel-transactions">
+      <!-- Filter bar -->
+      <div class="filter-bar" style="margin-top:1rem">
+        <label>Status: <select id="f-status" onchange="applyFilter()"><option value="">All</option><option>APPROVED</option><option>SUSPICIOUS</option><option>FRAUD</option><option>PENDING</option></select></label>
+        <label>Min Score: <input type="number" id="f-min" min="0" max="100" placeholder="0" style="width:70px" onchange="applyFilter()"></label>
+        <label>Max Score: <input type="number" id="f-max" min="0" max="100" placeholder="100" style="width:70px" onchange="applyFilter()"></label>
+        <label>Search: <input type="text" id="f-search" placeholder="Merchant or TX ID" style="width:160px" oninput="applyFilter()"></label>
+        <button class="btn btn-sm btn-ghost" onclick="clearFilter()">Clear</button>
+      </div>
+      <div class="panel panel-b" style="padding:0;overflow:hidden">
+        <div id="tx-empty" class="empty"><i data-lucide="inbox" style="width:28px;height:28px;color:#1e293b;animation:pulse 2s ease infinite"></i><p>Waiting for transactions — use the Simulator tab.</p></div>
+        <div class="tw" id="tx-wrap" style="display:none">
+          <table>
+            <thead><tr><th>TX ID</th><th>MERCHANT</th><th>LOCATION</th><th>AMOUNT</th><th>STATUS</th><th>RISK SCORE</th><th>FLAGS</th><th>TIME</th></tr></thead>
+            <tbody id="tx-body"></tbody>
+          </table>
+          <div class="pagination-bar" style="display:flex;align-items:center;justify-content:flex-end;gap:.5rem;padding:.7rem 1.2rem;border-top:1px solid rgba(255,255,255,.04);background:rgba(2,6,23,.2)">
+            <span style="font-size:.72rem;color:#64748b;margin-right:auto" id="pg-info">Page 1 of 1</span>
+            <button class="btn btn-sm btn-ghost" id="pg-prev" onclick="changePage(-1)" style="padding:.25rem .5rem"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+            <button class="btn btn-sm btn-ghost" id="pg-next" onclick="changePage(1)" style="padding:.25rem .5rem"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━ CASE MANAGEMENT ━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel" id="panel-cases">
+      <div style="margin-top:1rem" class="panel panel-b">
+        <div class="ph" style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+          <i data-lucide="folder-open" style="color:var(--blue);width:18px;height:18px"></i>
+          <span class="ph-title text-blue" id="cases-title">Open Cases</span>
+          <select id="case-filter" onchange="renderCases()" style="margin-left:0.5rem;padding:.3rem .6rem;background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-family:var(--font);font-size:.75rem;outline:none;cursor:pointer">
+            <option value="OPEN">Open Cases</option>
+            <option value="RESOLVED">Resolved Cases</option>
+          </select>
+          <span id="cases-count" class="ph-badge" style="background:var(--blue-dim);color:var(--blue)">0 open</span>
+        </div>
+        <p style="font-size:.78rem;color:#64748b;margin-bottom:1rem">Click any case to review details, reason codes, and resolve.</p>
+        <div id="cases-empty" class="empty"><i data-lucide="check-circle" style="width:28px;height:28px;color:#1e293b"></i><p id="cases-empty-text">No open cases — all clear.</p></div>
+        <div class="tw" id="cases-wrap" style="display:none">
+          <table>
+            <thead><tr><th>TX ID</th><th>MERCHANT</th><th>AMOUNT</th><th>SCORE</th><th>STATUS</th><th>REASON COUNT</th><th>ACTION</th></tr></thead>
+            <tbody id="cases-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━ FRAUD RINGS ━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel" id="panel-rings">
+      <div style="margin-top:1rem" class="panel panel-r">
+        <div class="ph"><i data-lucide="share-2" style="color:var(--red);width:18px;height:18px"></i><span class="ph-title text-red">Fraud Ring Network Graph</span><button class="btn btn-sm btn-ghost" onclick="renderRingGraph()" style="margin-left:auto">Refresh</button></div>
+        <p style="font-size:.78rem;color:#64748b;margin-bottom:1rem">Nodes represent user accounts. Edges appear when two accounts share the same device fingerprint — indicating a coordinated fraud ring.</p>
+        <div id="ring-canvas"></div>
+        <div id="rings-list" style="margin-top:1rem;display:flex;flex-direction:column;gap:.6rem"></div>
+      </div>
+    </div>
+
+    <!-- ━━━━━ SIMULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel" id="panel-simulator">
+      <div style="margin-top:1rem" class="grid2">
+        <div class="panel panel-g">
+          <div class="ph"><i data-lucide="terminal" style="color:var(--gold);width:18px;height:18px"></i><span class="ph-title text-gold">Transaction Ingestion Simulator</span></div>
+          <p style="font-size:.78rem;color:#64748b;margin-bottom:1rem;line-height:1.6">Simulate a transaction through the full 6-layer fraud engine. Behavioral biometrics are auto-collected from your interaction with this form.</p>
+          <div id="sim-err" class="alert alert-err"><i data-lucide="alert-circle" style="width:14px;height:14px;flex-shrink:0"></i><span id="sim-err-msg"></span></div>
+          <div id="sim-ok" class="alert alert-ok"><i data-lucide="zap" style="width:14px;height:14px;flex-shrink:0"></i><span>Dispatched! Fraud engine scoring...</span></div>
+          <form id="sim-form">
+            <div class="grid2">
+              <div class="field"><label>Amount ($) *</label><div class="iw"><i data-lucide="dollar-sign"></i><input type="number" id="sim-amt" step="0.01" min="0.01" placeholder="2500.00"></div></div>
+              <div class="field"><label>Location</label><div class="iw"><i data-lucide="map-pin"></i><input type="text" id="sim-loc" placeholder="London, UK"></div></div>
+            </div>
+            <div class="field"><label>Merchant</label><div class="iw"><i data-lucide="shopping-bag"></i><input type="text" id="sim-mch" placeholder="e.g. CryptoXchange-01, Amazon"></div></div>
+            <div class="grid2">
+              <div class="field"><label>IP Address (optional)</label><div class="iw"><i data-lucide="wifi"></i><input type="text" id="sim-ip" placeholder="192.168.1.1"></div></div>
+              <div class="field"><label>Device Profile (for Fraud Ring simulation)</label><div class="iw"><i data-lucide="monitor"></i><select id="sim-dev" style="width:100%;padding:.78rem 1rem .78rem 2.4rem;background:rgba(2,6,23,0.7);border:1px solid rgba(255,255,255,0.07);border-radius:11px;color:#e2e8f0;font-family:var(--font);font-size:.88rem;outline:none;cursor:pointer;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220%22 fill=%22none%22 stroke=%22%23475569%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:30px;-webkit-appearance:none;-moz-appearance:none;appearance:none"><option value="unique">Standard (Unique per user)</option><option value="shared-1">Shared: "ROBOT-FP-77" (Fraud Ring)</option><option value="shared-2">Risky Emulator: "EMULATOR-FP-99"</option></select></div></div>
+            </div>
+            <button type="submit" class="btn btn-gold btn-full" id="sim-btn"><i data-lucide="send" style="width:15px;height:15px"></i> Ingest Transaction</button>
+          </form>
+        </div>
+
+        <div class="panel panel-b">
+          <div class="ph"><i data-lucide="radar" style="color:var(--blue);width:18px;height:18px"></i><span class="ph-title text-blue">Biometric Collector</span><div class="live-dot"></div></div>
+          <p style="font-size:.78rem;color:#64748b;margin-bottom:1rem;line-height:1.6">Passively collecting behavioral signals from your interaction with the simulator form.</p>
+          <div style="display:flex;flex-direction:column;gap:.85rem">
+            <div><div class="bio-row"><span style="font-size:.75rem">Mouse Velocity</span><span id="bio-mv" class="mono" style="font-size:.75rem;color:var(--blue)">0 px/s</span></div><div class="bio-bar"><div id="bio-mv-bar" class="bio-fill" style="width:0%;background:var(--blue)"></div></div></div>
+            <div><div class="bio-row"><span style="font-size:.75rem">Typing Cadence</span><span id="bio-tc" class="mono" style="font-size:.75rem;color:var(--blue)">—</span></div><div class="bio-bar"><div id="bio-tc-bar" class="bio-fill" style="width:0%;background:var(--blue)"></div></div></div>
+            <div><div class="bio-row"><span style="font-size:.75rem">Click Events</span><span id="bio-cl" class="mono" style="font-size:.75rem;color:var(--blue)">0</span></div></div>
+            <div><div class="bio-row"><span style="font-size:.75rem">Session Duration</span><span id="bio-sd" class="mono" style="font-size:.75rem;color:var(--blue)">0 ms</span></div></div>
+            <hr class="divider">
+            <div><div class="bio-row"><span style="font-size:.75rem fw-700">Device Fingerprint</span><span id="dev-risk" class="badge badge-approved">LOW</span></div></div>
+            <div style="font-size:.7rem;color:#64748b;line-height:1.5" id="dev-details">Platform: — · Plugins: — · Resolution: —</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━ SHADOW MODE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel" id="panel-shadow">
+      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:1rem">
+        <div class="panel panel-p">
+          <div class="ph"><i data-lucide="eye" style="color:var(--purple);width:18px;height:18px"></i><span class="ph-title text-purple">Shadow Mode Testing</span></div>
+          <p style="font-size:.8rem;color:#94a3b8;margin-bottom:1.2rem;line-height:1.6">When enabled, every transaction is scored by <em>both</em> the live model and the shadow model simultaneously. The shadow model uses tighter thresholds (e.g., $8K high-risk vs $10K). Only the live model's decision is applied — shadow results are logged for analysis.</p>
+          <div class="shadow-toggle" onclick="toggleShadow()" id="shadow-toggle">
+            <div class="toggle-sw" id="shadow-sw"></div>
+            <div>
+              <div class="shadow-label" id="shadow-label">Shadow Mode: OFF</div>
+              <div class="shadow-sublabel">Click to activate parallel model testing</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-p">
+          <div class="ph"><i data-lucide="bar-chart-2" style="color:var(--purple);width:18px;height:18px"></i><span class="ph-title text-purple">Model Comparison</span></div>
+          <div id="shadow-empty" class="empty"><i data-lucide="eye-off" style="width:24px;height:24px;color:#1e293b"></i><p>Enable Shadow Mode and submit transactions to see model comparisons.</p></div>
+          <div class="tw" id="shadow-table-wrap" style="display:none">
+            <table>
+              <thead><tr><th>TX ID</th><th>MERCHANT</th><th>LIVE SCORE</th><th>SHADOW SCORE</th><th>DIVERGED?</th></tr></thead>
+              <tbody id="shadow-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━ AUDIT LOG ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="tab-panel" id="panel-audit">
+      <div style="margin-top:1rem" class="panel panel-b">
+        <div class="ph"><i data-lucide="file-text" style="color:var(--blue);width:18px;height:18px"></i><span class="ph-title text-blue">Compliance Audit Trail</span></div>
+        <div id="audit-empty" class="empty"><i data-lucide="file-text" style="width:24px;height:24px;color:#1e293b"></i><p>No audit events yet.</p></div>
+        <div class="tw" id="audit-wrap" style="display:none">
+          <table>
+            <thead><tr><th>EVENT</th><th>USER ID</th><th>TX ID</th><th>PERFORMED BY</th><th>DETAILS</th><th>TIME</th></tr></thead>
+            <tbody id="audit-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dash -->
+</div><!-- /view-dashboard -->
+
+<!-- ━━━━━ CASE DETAIL MODAL ━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="modal-overlay" id="case-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <i data-lucide="folder-open" style="color:var(--blue);width:18px;height:18px"></i>
+        <span style="font-weight:700;font-size:1rem">Case Detail</span>
+        <span id="modal-tx-id" class="tx-id" style="margin-left:.25rem"></span>
+      </div>
+      <button class="btn btn-sm btn-ghost" onclick="closeModal()"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+    </div>
+    <div class="modal-body">
+      <!-- Transaction details -->
+      <div class="section-title">Transaction Info</div>
+      <dl class="detail-grid" id="modal-details"></dl>
+
+      <!-- Reason Codes (XAI) -->
+      <div class="section-title">Explainable AI — Reason Codes</div>
+      <div id="modal-reasons"></div>
+
+      <!-- Biometric / Device -->
+      <div class="section-title">Intelligence Signals</div>
+      <div id="modal-signals" style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;font-size:.78rem"></div>
+
+      <!-- Velocity -->
+      <div class="section-title">Velocity Window</div>
+      <div id="modal-velocity" class="grid3"></div>
+
+      <!-- Analyst note -->
+      <div class="section-title">Analyst Note</div>
+      <textarea id="modal-note" rows="3" style="width:100%;background:rgba(2,6,23,.7);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#e2e8f0;font-family:var(--font);font-size:.82rem;padding:.7rem .9rem;resize:vertical;outline:none" placeholder="Add notes about this case..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="modal-legit" onclick="resolveCase('FALSE_POSITIVE')"><i data-lucide="check" style="width:13px;height:13px"></i> Mark Legitimate</button>
+      <button class="btn btn-sm btn-red" id="modal-fraud" onclick="resolveCase('CONFIRMED_FRAUD')"><i data-lucide="flame" style="width:13px;height:13px"></i> Confirm Fraud</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════════════════
+const DB = {
+  getUsers:   ()  => JSON.parse(localStorage.getItem('ag_users')  || '[]'),
+  saveUsers:  u   => localStorage.setItem('ag_users',  JSON.stringify(u)),
+  getTxs:     ()  => JSON.parse(localStorage.getItem('ag_txs')    || '[]'),
+  saveTxs:    t   => localStorage.setItem('ag_txs',    JSON.stringify(t)),
+  getAudit:   ()  => JSON.parse(localStorage.getItem('ag_audit')  || '[]'),
+  saveAudit:  a   => localStorage.setItem('ag_audit',  JSON.stringify(a)),
+  getSession: ()  => JSON.parse(sessionStorage.getItem('ag_sess') || 'null'),
+  saveSession:s   => sessionStorage.setItem('ag_sess', JSON.stringify(s)),
+  clearSession:() => sessionStorage.removeItem('ag_sess'),
+};
+function legacyHash(p) {
+  let h=0;
+  for(let i=0;i<p.length;i++){h=Math.imul(31,h)+p.charCodeAt(i)|0}
+  return h.toString(16);
+}
+
+async function hashPass(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BIOMETRIC COLLECTOR
+// ═══════════════════════════════════════════════════════════════
+const Bio = {
+  sessionStart: 0,
+  mouseVelocities: [],
+  lastMousePos: null,
+  lastMouseTime: 0,
+  keystrokeTimes: [],
+  lastKeystrokeTime: 0,
+  clicks: 0,
+  tracking: false,
+
+  startTracking() {
+    this.sessionStart = Date.now();
+    this.tracking = true;
+    this.mouseVelocities = []; this.keystrokeTimes = []; this.clicks = 0;
+    this.lastMousePos = null;
+  },
+
+  onMouseMove(e) {
+    if (!Bio.tracking) return;
+    const now = Date.now();
+    if (Bio.lastMousePos) {
+      const dx = e.clientX - Bio.lastMousePos.x, dy = e.clientY - Bio.lastMousePos.y;
+      const dt = (now - Bio.lastMouseTime) / 1000 || 0.001;
+      const v = Math.sqrt(dx*dx + dy*dy) / dt;
+      Bio.mouseVelocities.push(v);
+      if (Bio.mouseVelocities.length > 80) Bio.mouseVelocities.shift();
+    }
+    Bio.lastMousePos = {x: e.clientX, y: e.clientY};
+    Bio.lastMouseTime = now;
+    Bio.updateUI();
+  },
+
+  onKeydown(e) {
+    if (!Bio.tracking) return;
+    const now = Date.now();
+    if (Bio.lastKeystrokeTime > 0) Bio.keystrokeTimes.push(now - Bio.lastKeystrokeTime);
+    Bio.lastKeystrokeTime = now;
+    Bio.updateUI();
+  },
+
+  onClick() { if (Bio.tracking) { Bio.clicks++; Bio.updateUI(); } },
+
+  avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; },
+  stddev(arr) {
+    if (arr.length < 2) return 0;
+    const m = Bio.avg(arr);
+    return Math.sqrt(arr.reduce((s,v)=>s+(v-m)*(v-m),0)/(arr.length-1));
+  },
+
+  getSignal() {
+    return {
+      mouseVelocityAvg:    Bio.avg(Bio.mouseVelocities),
+      mouseVelocityStdDev: Bio.stddev(Bio.mouseVelocities),
+      typingCadenceAvg:    Bio.avg(Bio.keystrokeTimes),
+      typingCadenceStdDev: Bio.stddev(Bio.keystrokeTimes),
+      clickCount:          Bio.clicks,
+      sessionDurationMs:   Bio.tracking ? Date.now() - Bio.sessionStart : 0,
+    };
+  },
+
+  updateUI() {
+    const sig = Bio.getSignal();
+    const mv = Math.round(sig.mouseVelocityAvg);
+    el('bio-mv').textContent = mv + ' px/s';
+    el('bio-mv-bar').style.width = Math.min(100, mv/30) + '%';
+    const tc = sig.typingCadenceAvg;
+    el('bio-tc').textContent = tc > 0 ? Math.round(tc) + ' ms/key' : '—';
+    el('bio-tc-bar').style.width = tc > 0 ? Math.min(100, 100 - Math.min(100, tc/4)) + '%' : '0%';
+    el('bio-cl').textContent = sig.clickCount;
+    el('bio-sd').textContent = Math.round(sig.sessionDurationMs) + ' ms';
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  DEVICE FINGERPRINT
+// ═══════════════════════════════════════════════════════════════
+function getDeviceFingerprint(username = '', mode = 'unique') {
+  let fp;
+  if (mode === 'shared-1') {
+    fp = {
+      userAgent:      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      platform:       "Win32",
+      language:       "en-US",
+      timezone:       "America/New_York",
+      screenResolution: "1920x1080",
+      colorDepth:     24,
+      pluginCount:    3,
+      touchSupport:   false,
+      webdriver:      false,
+      cookieEnabled:  true,
+      cores:          8,
+      profileName:    "ROBOT-FP-77 (Shared)"
+    };
+  } else if (mode === 'shared-2') {
+    fp = {
+      userAgent:      "Mozilla/5.0 (Linux; Android 10; Android SDK built for x86) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Mobile Safari/537.36",
+      platform:       "Linux armv8l",
+      language:       "en-US",
+      timezone:       "Europe/London",
+      screenResolution: "1080x2400",
+      colorDepth:     24,
+      pluginCount:    0,
+      touchSupport:   true,
+      webdriver:      true,
+      cookieEnabled:  true,
+      cores:          4,
+      profileName:    "EMULATOR-FP-99 (Risky Shared)"
+    };
+  } else {
+    fp = {
+      userAgent:      navigator.userAgent,
+      platform:       navigator.platform,
+      language:       navigator.language,
+      timezone:       Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+      screenResolution: window.screen.width + 'x' + window.screen.height,
+      colorDepth:     window.screen.colorDepth,
+      pluginCount:    navigator.plugins ? navigator.plugins.length : 0,
+      touchSupport:   'ontouchstart' in window,
+      webdriver:      navigator.webdriver || false,
+      cookieEnabled:  navigator.cookieEnabled,
+      cores:          navigator.hardwareConcurrency || 0,
+      salt:           username
+    };
+  }
+  const hash = btoa(JSON.stringify(fp)).substring(0, 32);
+  return {...fp, hash};
+}
+
+function scoreDeviceRisk(fp) {
+  let score = 0;
+  if (fp.webdriver)      score += 0.5;
+  if (fp.pluginCount === 0) score += 0.2;
+  if (fp.userAgent.toLowerCase().includes('headless')) score += 0.45;
+  if (fp.userAgent.toLowerCase().includes('selenium')) score += 0.45;
+  score = Math.min(score, 1.0);
+  const risk = score > 0.5 ? 'HIGH' : score > 0.2 ? 'MEDIUM' : 'LOW';
+  el('dev-risk').className = 'badge ' + (risk==='HIGH'?'badge-fraud':risk==='MEDIUM'?'badge-suspicious':'badge-approved');
+  el('dev-risk').textContent = risk;
+  el('dev-details').textContent = `Platform: ${fp.platform} · Plugins: ${fp.pluginCount} · Resolution: ${fp.screenResolution} · Cores: ${fp.cores}`;
+  return {score, risk};
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FRAUD SCORING ENGINE (mirrors Java FraudEngineConsumer)
+// ═══════════════════════════════════════════════════════════════
+const CITY_COORDS = {
+  // Cities
+  'new york':[40.71,-74.00],'london':[51.50,-0.12],'paris':[48.85,2.35],
+  'tokyo':[35.67,139.65],'sydney':[-33.86,151.20],'dubai':[25.20,55.27],
+  'singapore':[1.35,103.81],'hong kong':[22.31,114.16],'los angeles':[34.05,-118.24],
+  'chicago':[41.87,-87.62],'toronto':[43.65,-79.38],'berlin':[52.52,13.40],
+  'moscow':[55.75,37.61],'mumbai':[19.07,72.87],'delhi':[28.61,77.20],
+  'bangalore':[12.97,77.59],'shanghai':[31.23,121.47],'beijing':[39.90,116.40],
+  'seoul':[37.56,126.97],'mexico city':[19.43,-99.13],'sao paulo':[-23.55,-46.63],
+  'cairo':[30.04,31.23],'lagos':[6.52,3.37],'johannesburg':[-26.20,28.04],
+  'amsterdam':[52.36,4.90],'zurich':[47.37,8.54],'madrid':[40.41,-3.70],
+  'rome':[41.90,12.49],'istanbul':[41.00,28.97],
+  // Countries / regions — mapped to geographic centre or capital
+  'india':[20.59,78.96],'england':[51.50,-0.12],'uk':[51.50,-0.12],
+  'usa':[37.09,-95.71],'us':[37.09,-95.71],'america':[37.09,-95.71],
+  'france':[46.23,2.21],'germany':[51.16,10.45],'italy':[41.87,12.56],
+  'spain':[40.46,-3.74],'portugal':[39.39,-8.22],'netherlands':[52.13,5.29],
+  'japan':[36.20,138.25],'china':[35.86,104.19],'south korea':[35.90,127.76],
+  'australia':[-25.27,133.77],'new zealand':[-40.90,174.88],
+  'canada':[56.13,-106.35],'mexico':[23.63,-102.55],
+  'russia':[61.52,105.31],'ukraine':[48.37,31.16],
+  'brazil':[-14.23,-51.92],'argentina':[-38.41,-63.61],
+  'south africa':[-30.55,22.93],'nigeria':[9.08,8.67],'kenya':[-0.02,37.90],
+  'pakistan':[30.37,69.34],'bangladesh':[23.68,90.35],'sri lanka':[7.87,80.77],
+  'africa':[-8.78,34.51],'europe':[54.52,15.25],'asia':[34.04,100.61],
+};
+
+function getCoords(loc) {
+  if (!loc) return null;
+  // Normalize punctuation and whitespace to simple spaces
+  const normalized = loc.toLowerCase().replace(/[\s,.\-\/]+/g, ' ').trim();
+  const words = normalized.split(' ');
+
+  for (const [key, coords] of Object.entries(CITY_COORDS)) {
+    const keyWords = key.split(' ');
+    // Check if keyWords form a contiguous subarray of the location words
+    for (let i = 0; i <= words.length - keyWords.length; i++) {
+      let match = true;
+      for (let j = 0; j < keyWords.length; j++) {
+        if (words[i + j] !== keyWords[j]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) return coords;
+    }
+  }
+  return null;
+}
+
+function haversineKm(lat1,lon1,lat2,lon2){
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function scoreFraud(tx, userId) {
+  const reasons = [];
+  let score = 0;
+  const amount = parseFloat(tx.amount) || 0;
+  const m = (tx.merchant || '').toLowerCase();
+  const l = (tx.location || '').toLowerCase();
+
+  // Layer 1 — Base Rules (30% weight)
+  let base = 0;
+  if (amount >= 1000000)     { base += 0.95; reasons.push('EXTREME_AMOUNT: $' + fmt(amount) + ' far exceeds $1,000,000 critical-risk threshold'); }
+  else if (amount >= 100000) { base += 0.75; reasons.push('VERY_HIGH_AMOUNT: $' + fmt(amount) + ' exceeds $100,000 very-high-risk threshold'); }
+  else if (amount >= 10000)  { base += 0.55; reasons.push('HIGH_AMOUNT: $' + fmt(amount) + ' exceeds $10,000 high-risk threshold'); }
+  else if (amount >= 2000)   { base += 0.30; reasons.push('MEDIUM_AMOUNT: $' + fmt(amount) + ' exceeds $2,000 threshold'); }
+  else if (amount >= 500)    { base += 0.10; }
+  if (m.includes('crypto')||m.includes('exchange')||m.includes('coin')||m.includes('xchange')||m.includes('defi')) { base+=0.25; reasons.push('CRYPTO_MERCHANT: "'+tx.merchant+'" is a high-risk crypto/exchange entity'); }
+  if (m.includes('darkweb')||m.includes('anon')||m.includes('unknown')) { base+=0.40; reasons.push('BLACKLISTED_MERCHANT: "'+tx.merchant+'" matches high-risk blacklist'); }
+  if (m.includes('casino')||m.includes('bet')||m.includes('poker')) { base+=0.20; reasons.push('GAMBLING_MERCHANT: "'+tx.merchant+'" is a gambling-category merchant'); }
+  if (!tx.location||tx.location.trim()==='') { base+=0.15; reasons.push('MISSING_LOCATION: No location data — terminal or IP missing'); }
+  else if (l.includes('vpn')||l.includes('proxy')||l.includes('tor')) { base+=0.25; reasons.push('RISKY_LOCATION: "'+tx.location+'" matches VPN/proxy indicator'); }
+  base = Math.min(base, 1.0);
+  score += base * 0.30;
+
+  // Layer 2 — Velocity (20% weight)
+  let velScore = 0;
+  const txTime = new Date(tx.createdAt || new Date()).getTime();
+  // Filter out current transaction and any future transactions to make scoring historically stable
+  const userTxs = DB.getTxs().filter(t => t.userId === userId && t.id !== tx.id && new Date(t.createdAt).getTime() <= txTime);
+  const last1m  = userTxs.filter(t => (txTime - new Date(t.createdAt).getTime()) < 60000).length;
+  const last5m  = userTxs.filter(t => (txTime - new Date(t.createdAt).getTime()) < 300000).length;
+  const last1h  = userTxs.filter(t => (txTime - new Date(t.createdAt).getTime()) < 3600000).length;
+  if (last1m >= 5)  { velScore += 0.40; reasons.push('HIGH_VELOCITY: '+last1m+' transactions in the last 60 seconds'); }
+  else if (last1m >= 3) { velScore += 0.20; reasons.push('ELEVATED_VELOCITY: '+last1m+' transactions in 60 seconds'); }
+  if (last5m >= 10) { velScore += 0.25; reasons.push('HIGH_VELOCITY: '+last5m+' transactions in last 5 minutes'); }
+  velScore = Math.min(velScore, 1.0);
+  score += velScore * 0.20;
+
+  // Layer 3 — Biometrics (15% weight)
+  let bioScore = 0;
+  const sig = tx.biometricSignal || {};
+  if (sig.typingCadenceAvg > 0 && sig.typingCadenceAvg < 20) { bioScore += 0.30; reasons.push('BIOMETRIC_TYPING: '+Math.round(sig.typingCadenceAvg)+'ms/key — superhuman typing speed'); }
+  if (sig.mouseVelocityAvg > 3000) { bioScore += 0.30; reasons.push('BIOMETRIC_MOUSE: Abnormal mouse velocity '+Math.round(sig.mouseVelocityAvg)+'px/s'); }
+  if (sig.sessionDurationMs > 0 && sig.sessionDurationMs < 800) { bioScore += 0.20; reasons.push('BIOMETRIC_SESSION: Form completed in '+Math.round(sig.sessionDurationMs)+'ms — humanly impossible'); }
+  if (sig.clickCount === 0) { bioScore += 0.10; reasons.push('BIOMETRIC_CLICKS: Zero mouse clicks — possible scripted submission'); }
+  bioScore = Math.min(bioScore, 1.0);
+  score += bioScore * 0.15;
+  tx.biometricScore = bioScore;
+
+  // Layer 4 — Device Intelligence (15% weight)
+  let devScore = tx.deviceScore || 0;
+  if (devScore > 0) { reasons.push('DEVICE_RISK: Device fingerprint risk score ' + Math.round(devScore*100) + '%'); }
+  score += devScore * 0.15;
+
+  // Layer 5 — Geofencing / Impossible Travel (20% weight)
+  // NOTE: exclude the current tx itself — it was saved to DB before scoring,
+  // so without this filter userOrderedTxs[0] === current tx → 0 km travel.
+  let geoScore = 0;
+  const prevTxs = [...userTxs]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // most-recent first
+  if (prevTxs.length > 0) {
+    const prev = prevTxs[0];
+    const prevCoords = getCoords(prev.location);
+    const curCoords  = getCoords(tx.location);
+    if (prevCoords && curCoords) {
+      const distKm = haversineKm(prevCoords[0], prevCoords[1], curCoords[0], curCoords[1]);
+      // Use actual time between the two transactions, not scoring-delay-inflated `now`
+      const secsDiff = Math.max(1, (new Date(tx.createdAt).getTime() - new Date(prev.createdAt).getTime()) / 1000);
+      const speedKmh = distKm / (secsDiff / 3600);
+      if (distKm > 50 && speedKmh > 600) {
+        // Scale geoScore: 600 km/h (fast jet) → 0.50  |  6000 km/h → 0.80+
+        geoScore = Math.min(1.0, 0.50 + (speedKmh - 600) / 10000);
+        const minStr = secsDiff < 60 ? Math.round(secsDiff) + 's' : Math.round(secsDiff / 60) + 'min';
+        reasons.push(`IMPOSSIBLE_TRAVEL: ${prev.location} → ${tx.location} (${Math.round(distKm)} km) in ${minStr} — requires ${Math.round(speedKmh).toLocaleString()} km/h`);
+      }
+    } else if (!prevCoords || !curCoords) {
+      // We have a previous tx but can't resolve one of the locations — flag lightly
+      if (prev.location && tx.location && prev.location.toLowerCase() !== tx.location.toLowerCase()) {
+        reasons.push(`GEO_UNRESOLVABLE: Location changed ("${prev.location}" → "${tx.location}") but coordinates unknown — manual review advised`);
+      }
+    }
+  }
+  score += geoScore * 0.20;
+
+  // ── Hard Floor Override ─────────────────────────────────────────
+  // The layer-weight architecture (Layer 1 = only 30%) means even a
+  // $1 billion transaction can score ~30% if biometrics/geo are clean.
+  // Hard floors ensure extreme amounts can NEVER slip through as APPROVED.
+  let hardFloor = 0;
+  const isCryptoMerchant = m.includes('crypto')||m.includes('exchange')||m.includes('coin')||m.includes('xchange')||m.includes('defi');
+  if      (amount >= 1000000000) { hardFloor = 0.90; reasons.push('CRITICAL_THRESHOLD: Amount exceeds $1 Billion — auto-escalated to FRAUD tier'); }
+  else if (amount >= 100000000)  { hardFloor = 0.82; reasons.push('CRITICAL_THRESHOLD: Amount exceeds $100 Million — auto-escalated to FRAUD tier'); }
+  else if (amount >= 10000000)   { hardFloor = 0.72; reasons.push('HIGH_THRESHOLD: Amount exceeds $10 Million — auto-escalated to SUSPICIOUS/FRAUD tier'); }
+  else if (amount >= 1000000)    { hardFloor = 0.58; reasons.push('HIGH_THRESHOLD: Amount exceeds $1 Million — auto-escalated to SUSPICIOUS tier'); }
+  else if (amount >= 100000)     { hardFloor = 0.42; }
+  // Crypto + large amount is a compound indicator — push score further
+  if (isCryptoMerchant && amount >= 100000) {
+    hardFloor = Math.min(1.0, hardFloor + 0.12);
+    reasons.push('COMPOUND_RISK: High-value crypto/exchange transaction — compound risk escalation applied');
+  }
+  // Apply the floor — the final score can never be BELOW the hard floor
+  let final = Math.max(hardFloor, Math.min(1.0, score));
+  final = Math.min(1.0, final + Math.random()*0.04);
+
+  // Shadow model (tighter thresholds than live model)
+  let shadowScore = null, shadowStatus = null, shadowDiverged = false;
+  if (STATE.shadowMode) {
+    let ss = 0;
+    // Tighter amount tiers (shadow uses $8K vs live $10K, etc.)
+    if      (amount >= 1000000000) ss += 0.92;
+    else if (amount >= 100000000)  ss += 0.85;
+    else if (amount >= 10000000)   ss += 0.75;
+    else if (amount >= 1000000)    ss += 0.62;
+    else if (amount >= 100000)     ss += 0.45;
+    else if (amount >= 8000)       ss += 0.50;
+    else if (amount >= 1500)       ss += 0.28;
+    if (m.includes('crypto')||m.includes('exchange')||m.includes('xchange')) { ss += 0.30; }
+    if (m.includes('casino')||m.includes('bet')) ss += 0.25;
+    if (!tx.location) ss += 0.18;
+    // Shadow compound risk: crypto + large amount
+    if ((m.includes('crypto')||m.includes('exchange')) && amount >= 100000) ss += 0.15;
+    ss = Math.min(1.0, ss + Math.random()*0.06);
+    shadowScore = ss;
+    shadowStatus = ss > 0.75 ? 'FRAUD' : ss > 0.45 ? 'SUSPICIOUS' : 'APPROVED';
+    const liveStatus = final > 0.80 ? 'FRAUD' : final > 0.50 ? 'SUSPICIOUS' : 'APPROVED';
+    shadowDiverged = shadowStatus !== liveStatus;
+    if (shadowDiverged) {
+      addAudit('SHADOW_DIVERGENCE', userId, tx.id, `Live score=${Math.round(final*100)}% vs Shadow score=${Math.round(ss*100)}% — models diverged`, 'SHADOW_ENGINE');
+    }
+  }
+
+  const status = final > 0.80 ? 'FRAUD' : final > 0.50 ? 'SUSPICIOUS' : 'APPROVED';
+  reasons.unshift('COMPOSITE_SCORE: ' + Math.round(final*100) + '% — ' + (final>0.80?'HIGH RISK':final>0.50?'MEDIUM RISK':'LOW RISK'));
+
+  return { final, status, reasons, velCount: last1m, shadowScore, shadowStatus, shadowDiverged };
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUDIT
+// ═══════════════════════════════════════════════════════════════
+function addAudit(type, userId, txId, details, by='SYSTEM') {
+  const events = DB.getAudit();
+  events.push({ id: Date.now(), eventType:type, userId, transactionId:txId, details, performedBy:by, occurredAt: new Date().toISOString() });
+  DB.saveAudit(events);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+const STATE = { shadowMode: false, currentCaseTxId: null };
+
+// ═══════════════════════════════════════════════════════════════
+//  ROUTER
+// ═══════════════════════════════════════════════════════════════
+function go(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  el('view-' + view).classList.add('active');
+  lucide.createIcons();
+  if (view === 'dashboard') {
+    // ── Update header with the CURRENT session's username ──────────
+    const sess = DB.getSession();
+    el('dash-user').textContent = sess ? sess.username.toUpperCase() : '—';
+
+    // ── Always land on Overview tab (don't inherit previous user's tab) ──
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    el('tab-overview').classList.add('active');
+    el('panel-overview').classList.add('active');
+
+    // ── Reset per-session state ─────────────────────────────────────
+    STATE.shadowMode = false;
+    STATE.currentCaseTxId = null;
+
+    Bio.startTracking();
+    renderAll();
+    updateDeviceUI();
+  }
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+  el('tab-' + name).classList.add('active');
+  el('panel-' + name).classList.add('active');
+  lucide.createIcons();
+  if (name === 'overview')      { renderStats(); renderAlerts(); }
+  if (name === 'transactions')  renderTransactions();
+  if (name === 'rings')         renderRingGraph();
+  if (name === 'audit')         renderAudit();
+  if (name === 'cases')         renderCases();
+  if (name === 'shadow')        renderShadow();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════
+el('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const u = val('l-u'), p = val('l-p');
+  const users = DB.getUsers();
+  const targetHash = await hashPass(p);
+  const legacyTarget = legacyHash(p);
+
+  const user = users.find(x => {
+    if (x.username !== u) return false;
+    if (x.passwordHash === targetHash) return true;
+    if (x.passwordHash === legacyTarget) {
+      // Auto-upgrade legacy hash to secure SHA-256!
+      x.passwordHash = targetHash;
+      DB.saveUsers(users);
+      return true;
+    }
+    return false;
+  });
+
+  if (!user) { showAlert('l-err','l-err-msg','Invalid credentials.'); return; }
+  if (user.status === 'SUSPENDED') { showAlert('l-err','l-err-msg','Account SUSPENDED. Contact admin.'); return; }
+  DB.saveSession({ id: user.id, username: user.username, role: user.role || 'USER' });
+  addAudit('LOGIN_SUCCESS', user.id, null, 'Successful login for ' + u, u);
+  // Clear login fields so credentials don't linger when hitting Back
+  el('l-u').value = ''; el('l-p').value = '';
+  go('dashboard');
+});
+
+el('signup-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const u=val('su-u'),em=val('su-e'),p=val('su-p'),hb=val('su-hb');
+  if (!u||!em||!p) { showAlert('su-err','su-err-msg','Fill required fields.'); return; }
+  if (p.length < 4) { showAlert('su-err','su-err-msg','Min 4 char passphrase.'); return; }
+  const users = DB.getUsers();
+  if (users.find(x=>x.username===u)) { showAlert('su-err','su-err-msg',`Username "${u}" taken.`); return; }
+  const passHash = await hashPass(p);
+  const user = { id: Date.now(), username:u, email:em, phone:val('su-ph'), homeBase:hb, passwordHash:passHash, role:'USER', status:'ACTIVE', createdAt:new Date().toISOString() };
+  users.push(user);
+  DB.saveUsers(users);
+  el('su-ok').classList.add('show');
+  ['su-u','su-e','su-ph','su-hb','su-p'].forEach(id => el(id).value='');
+  setTimeout(()=>{ el('su-ok').classList.remove('show'); go('login'); }, 1800);
+});
+
+function logout() {
+  DB.clearSession();
+  go('login');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SIMULATOR
+// ═══════════════════════════════════════════════════════════════
+el('sim-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const session = DB.getSession();
+  if (!session) return;
+
+  const amount = parseFloat(val('sim-amt'));
+  if (!amount || amount <= 0) { el('sim-err').classList.add('show'); el('sim-err-msg').textContent='Enter valid amount.'; return; }
+  el('sim-err').classList.remove('show');
+
+  const devMode = val('sim-dev') || 'unique';
+  const fp = getDeviceFingerprint(session.username, devMode);
+  const devResult = scoreDeviceRisk(fp);
+  const bioSig = Bio.getSignal();
+
+  const tx = {
+    id:              (DB.getTxs().reduce((mx,t)=>Math.max(mx,t.id||0),0)) + 1,
+    userId:          session.id,
+    amount:          amount,
+    merchant:        val('sim-mch') || 'Unknown Merchant',
+    location:        val('sim-loc') || '',
+    ipAddress:       val('sim-ip') || 'N/A',
+    deviceFingerprint: fp.hash,
+    deviceScore:     devResult.score,
+    biometricSignal: bioSig,
+    status:          'PENDING',
+    caseStatus:      'OPEN',
+    fraudScore:      0,
+    shadowScore:     null,
+    velocityCount:   0,
+    reasonCodes:     [],
+    createdAt:       new Date().toISOString()
+  };
+
+  const txs = DB.getTxs();
+  txs.push(tx);
+  DB.saveTxs(txs);
+
+  el('sim-ok').classList.add('show');
+  const btn = el('sim-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="spin" style="width:15px;height:15px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="28" stroke-dashoffset="10"/></svg> Scoring...`;
+
+  renderAll();
+
+  // Simulate Kafka async delay
+  const delay = 300 + Math.random() * 600;
+  setTimeout(() => {
+    const all = DB.getTxs();
+    const t = all.find(x => x.id === tx.id);
+    if (t) {
+      const result = scoreFraud(t, session.id);
+      t.fraudScore    = result.final;
+      t.status        = result.status;
+      t.reasonCodes   = result.reasons;
+      t.velocityCount = result.velCount;
+      t.shadowScore   = result.shadowScore;
+      t.shadowStatus  = result.shadowStatus;
+      t.shadowDiverged= result.shadowDiverged;
+
+      // Auto-block if score > 0.95
+      if (result.final > 0.95) {
+        const users = DB.getUsers();
+        const usr = users.find(u => u.id === session.id);
+        if (usr && usr.status !== 'SUSPENDED') {
+          usr.status = 'SUSPENDED';
+          usr.suspendedAt = new Date().toISOString();
+          usr.suspensionReason = 'Auto-suspended: fraud score ' + Math.round(result.final*100) + '%';
+          DB.saveUsers(users);
+          addAudit('AUTO_BLOCK', session.id, t.id, 'User auto-suspended. Fraud score: '+Math.round(result.final*100)+'%', 'SYSTEM');
+          toast('🚨 User AUTO-BLOCKED — score ' + Math.round(result.final*100) + '%', 'err');
+        }
+      }
+      DB.saveTxs(all);
+      renderAll();
+
+      const type = result.status==='FRAUD'?'err':result.status==='SUSPICIOUS'?'warn':'ok';
+      const icon = result.status==='FRAUD'?'🚨':result.status==='SUSPICIOUS'?'⚠️':'✅';
+      toast(`${icon} TX-${10000+t.id}: ${result.status} (${Math.round(result.final*100)}%)`, type);
+    }
+
+    el('sim-ok').classList.remove('show');
+    btn.disabled = false;
+    btn.innerHTML = `<i data-lucide="send" style="width:15px;height:15px"></i> Ingest Transaction`;
+    lucide.createIcons();
+    Bio.startTracking(); // Reset biometric collector
+  }, delay);
+
+  ['sim-amt','sim-mch','sim-loc','sim-ip'].forEach(id => el(id).value='');
+  el('sim-dev').value = 'unique';
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderAll() {
+  renderStats();
+  renderTransactions();
+  renderCases();
+  renderAlerts();
+  renderShadow();
+  renderAudit();
+}
+
+function renderStats() {
+  const txs   = DB.getTxs();
+  const users = DB.getUsers();
+  const approved   = txs.filter(t=>t.status==='APPROVED');
+  const suspicious = txs.filter(t=>t.status==='SUSPICIOUS');
+  const fraud      = txs.filter(t=>t.status==='FRAUD');
+  const suspended  = users.filter(u=>u.status==='SUSPENDED');
+  const volume     = approved.reduce((s,t)=>s+(parseFloat(t.amount)||0),0);
+
+  el('s-total').textContent     = txs.length.toLocaleString();
+  el('s-approved').textContent  = approved.length.toLocaleString();
+  el('s-suspicious').textContent= suspicious.length.toLocaleString();
+  el('s-fraud').textContent     = fraud.length.toLocaleString();
+  el('s-amount').textContent    = fmt(volume);
+  el('s-suspended').textContent = suspended.length.toLocaleString();
+}
+
+let currentPage = 1;
+const pageSize = 10;
+
+let allTxs = [];
+function renderTransactions() {
+  allTxs = [...DB.getTxs()].reverse();
+  currentPage = 1;
+  applyFilter();
+}
+
+function applyFilter() {
+  const status  = el('f-status').value;
+  const minScore= parseFloat(el('f-min').value) || 0;
+  const maxScore= parseFloat(el('f-max').value) || 100;
+  const search  = val('f-search').toLowerCase();
+  const filtered = allTxs.filter(t => {
+    if (status && t.status !== status) return false;
+    const score = Math.round((t.fraudScore||0)*100);
+    if (score < minScore || score > maxScore) return false;
+    if (search && !t.merchant.toLowerCase().includes(search) && !String(10000+t.id).includes(search)) return false;
+    return true;
+  });
+
+  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const start = (currentPage - 1) * pageSize;
+  const pageTxs = filtered.slice(start, start + pageSize);
+
+  el('pg-info').textContent = `Page ${currentPage} of ${totalPages} (Total: ${filtered.length} txs)`;
+  el('pg-prev').disabled = currentPage === 1;
+  el('pg-next').disabled = currentPage === totalPages;
+
+  paintTable('tx-body', 'tx-empty', 'tx-wrap', pageTxs, txRow, true);
+}
+
+function changePage(dir) {
+  currentPage += dir;
+  applyFilter();
+}
+
+function clearFilter() {
+  el('f-status').value=''; el('f-min').value=''; el('f-max').value=''; el('f-search').value='';
+  currentPage = 1;
+  applyFilter();
+}
+
+function txRow(t) {
+  const score = Math.round((t.fraudScore||0)*100);
+  const sc = scoreColor(t.status);
+  const rc = (t.reasonCodes||[]).length;
+  return `<tr onclick="openCase(${t.id})">
+    <td class="tx-id">TX-${10000+t.id}</td>
+    <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(t.merchant)}">${esc(t.merchant)}</td>
+    <td style="color:#64748b;font-size:.78rem">${esc(t.location)||'—'}</td>
+    <td style="font-weight:700">${fmt(t.amount)}</td>
+    <td>${badgeHTML(t.status)}</td>
+    <td class="mono fw-700" style="color:${sc}">${t.status==='PENDING'?'—':score+'%'}</td>
+    <td><span style="font-size:.72rem;color:#64748b">${rc} codes</span></td>
+    <td style="color:#475569;font-size:.75rem;white-space:nowrap">${timeAgo(t.createdAt)}</td>
+  </tr>`;
+}
+
+function renderCases() {
+  const filter = el('case-filter').value;
+  const allCases = DB.getTxs().filter(t => t.status === 'SUSPICIOUS' || t.status === 'FRAUD');
+  const filtered = allCases.filter(t => {
+    if (filter === 'OPEN') return !t.caseStatus || t.caseStatus === 'OPEN';
+    return t.caseStatus && t.caseStatus !== 'OPEN';
+  }).reverse();
+
+  el('cases-title').textContent = filter === 'OPEN' ? 'Open Cases' : 'Resolved Cases';
+  el('cases-count').textContent = filtered.length + (filter === 'OPEN' ? ' open' : ' resolved');
+  el('cases-empty-text').textContent = filter === 'OPEN' ? 'No open cases — all clear.' : 'No resolved cases found.';
+  paintTable('cases-body', 'cases-empty', 'cases-wrap', filtered, caseRow, true);
+}
+
+function caseRow(t) {
+  const score = Math.round((t.fraudScore||0)*100);
+  const rc = (t.reasonCodes||[]).length;
+  const isResolved = t.caseStatus && t.caseStatus !== 'OPEN';
+
+  let statusBadge;
+  if (isResolved) {
+    statusBadge = `<span class="badge ${t.caseStatus==='CONFIRMED_FRAUD'?'badge-fraud':'badge-approved'}">
+      <i data-lucide="${t.caseStatus==='CONFIRMED_FRAUD'?'flame':'check-circle'}" style="width:10px;height:10px"></i>
+      ${t.caseStatus==='CONFIRMED_FRAUD'?'CONFIRMED FRAUD':'LEGITIMATE'}
+    </span>`;
+  } else {
+    statusBadge = badgeHTML(t.status);
+  }
+
+  const btnLabel = isResolved ? 'View' : 'Review';
+
+  return `<tr>
+    <td class="tx-id">TX-${10000+t.id}</td>
+    <td>${esc(t.merchant)}</td>
+    <td style="font-weight:700">${fmt(t.amount)}</td>
+    <td class="mono fw-700" style="color:${scoreColor(t.status)}">${score}%</td>
+    <td>${statusBadge}</td>
+    <td style="color:#64748b;font-size:.78rem">${rc} codes</td>
+    <td><button class="btn btn-sm btn-ghost" onclick="openCase(${t.id})"><i data-lucide="eye" style="width:13px;height:13px"></i> ${btnLabel}</button></td>
+  </tr>`;
+}
+
+function renderAlerts() {
+  const fraud = [...DB.getTxs()].filter(t=>t.status==='FRAUD'||t.status==='SUSPICIOUS').reverse().slice(0,5);
+  if (!fraud.length) return;
+  el('recent-alerts').innerHTML = fraud.map(t => `
+    <div style="display:flex;align-items:center;gap:.7rem;padding:.6rem .7rem;border-radius:8px;background:${t.status==='FRAUD'?'var(--red-dim)':'var(--amber-dim)'};margin-bottom:.4rem;cursor:pointer" onclick="openCase(${t.id})">
+      <i data-lucide="${t.status==='FRAUD'?'flame':'alert-circle'}" style="width:14px;height:14px;color:${t.status==='FRAUD'?'var(--red)':'var(--amber)'};flex-shrink:0"></i>
+      <span style="font-size:.78rem;flex:1">TX-${10000+t.id} · ${esc(t.merchant)} · ${fmt(t.amount)}</span>
+      ${badgeHTML(t.status)}
+    </div>`).join('');
+  lucide.createIcons();
+}
+
+function renderShadow() {
+  el('shadow-sw').className = 'toggle-sw' + (STATE.shadowMode ? ' on' : '');
+  el('shadow-label').textContent = 'Shadow Mode: ' + (STATE.shadowMode ? 'ON' : 'OFF');
+  el('sys-shadow').textContent = STATE.shadowMode ? 'ACTIVE' : 'STANDBY';
+  el('sys-shadow').className = STATE.shadowMode ? 'text-purple fw-700' : 'text-muted fw-700';
+
+  const shadowTxs = DB.getTxs().filter(t=>t.shadowScore!=null).reverse();
+  if (!shadowTxs.length) { el('shadow-empty').style.display='flex'; el('shadow-table-wrap').style.display='none'; return; }
+  el('shadow-empty').style.display='none'; el('shadow-table-wrap').style.display='block';
+  el('shadow-body').innerHTML = shadowTxs.map(t => {
+    const live = Math.round((t.fraudScore||0)*100);
+    const shadow = Math.round((t.shadowScore||0)*100);
+    const div = t.shadowDiverged;
+    return `<tr>
+      <td class="tx-id">TX-${10000+t.id}</td>
+      <td>${esc(t.merchant)}</td>
+      <td class="mono fw-700" style="color:${scoreColor(t.status)}">${live}%</td>
+      <td class="mono fw-700" style="color:${t.shadowStatus==='FRAUD'?'var(--red)':t.shadowStatus==='SUSPICIOUS'?'var(--amber)':'var(--green)'}">${shadow}%</td>
+      <td>${div?'<span class="badge badge-suspicious">DIVERGED</span>':'<span class="badge badge-approved">MATCH</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAudit() {
+  const events = [...DB.getAudit()].reverse();
+  if (!events.length) { el('audit-empty').style.display='flex'; el('audit-wrap').style.display='none'; return; }
+  el('audit-empty').style.display='none'; el('audit-wrap').style.display='block';
+  el('audit-body').innerHTML = events.map(a => `<tr>
+    <td><span class="badge ${a.eventType.includes('BLOCK')?'badge-fraud':a.eventType.includes('SUCCESS')?'badge-approved':'badge-pending'}">${a.eventType}</span></td>
+    <td class="mono" style="color:#64748b">${a.userId||'—'}</td>
+    <td class="mono" style="color:#64748b">${a.transactionId?'TX-'+(10000+a.transactionId):'—'}</td>
+    <td style="font-size:.75rem;color:#94a3b8">${esc(a.performedBy)}</td>
+    <td style="font-size:.75rem;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#64748b" title="${esc(a.details)}">${esc(a.details)}</td>
+    <td style="font-size:.75rem;color:#475569;white-space:nowrap">${timeAgo(a.occurredAt)}</td>
+  </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FRAUD RING GRAPH
+// ═══════════════════════════════════════════════════════════════
+function renderRingGraph() {
+  const canvas = el('ring-canvas');
+  canvas.innerHTML = '';
+  const ringsList = el('rings-list');
+  ringsList.innerHTML = '';
+
+  // Group by device fingerprint
+  const txs = DB.getTxs().filter(t=>t.deviceFingerprint);
+  const groups = {};
+  txs.forEach(t => {
+    if (!groups[t.deviceFingerprint]) groups[t.deviceFingerprint] = new Set();
+    groups[t.deviceFingerprint].add(t.userId);
+  });
+
+  // Only rings (>1 user same device)
+  const rings = Object.entries(groups).filter(([,users])=>users.size>1);
+
+  if (!rings.length) {
+    canvas.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.75rem;color:#2d3f5f"><i data-lucide="check-shield" style="width:36px;height:36px;color:#1e293b"></i><p style="font-size:.82rem;color:#475569">No fraud rings detected. Each device fingerprint maps to a single account.</p></div>';
+    lucide.createIcons();
+    return;
+  }
+
+  // Draw nodes (SVG-style positioned divs)
+  const W = canvas.offsetWidth || 600, H = 340;
+  const nodes = new Map(); // userId -> {x,y}
+  const allUsers = [...new Set(rings.flatMap(([,us])=>[...us]))];
+
+  allUsers.forEach((uid, i) => {
+    const angle = (i / allUsers.length) * 2 * Math.PI - Math.PI/2;
+    const r = Math.min(W,H)*0.35;
+    const cx = W/2, cy = H/2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    nodes.set(uid, {x, y});
+
+    const user = DB.getUsers().find(u=>u.id===uid);
+    const uname = user ? user.username : 'UID:'+uid;
+    const suspended = user && user.status==='SUSPENDED';
+
+    const div = document.createElement('div');
+    div.className = 'ring-node';
+    div.style.cssText = `left:${x}px;top:${y}px`;
+    div.innerHTML = `<div class="ring-node-circle" style="width:44px;height:44px;background:${suspended?'var(--red-dim)':'var(--navy2)'};border-color:${suspended?'var(--red)':'var(--blue)'}">
+      <span style="color:${suspended?'var(--red)':'var(--blue)'};font-size:.68rem">${uname.substring(0,4).toUpperCase()}</span>
+    </div><div class="ring-label" style="color:${suspended?'var(--red)':'#94a3b8'}">${uname}${suspended?'<br>⛔':''}  </div>`;
+    canvas.appendChild(div);
+  });
+
+  // Draw edges (SVG)
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none';
+  rings.forEach(([fp, userSet]) => {
+    const uids = [...userSet];
+    for (let i=0; i<uids.length; i++) {
+      for (let j=i+1; j<uids.length; j++) {
+        const a = nodes.get(uids[i]), b = nodes.get(uids[j]);
+        if (a && b) {
+          const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1',a.x); line.setAttribute('y1',a.y);
+          line.setAttribute('x2',b.x); line.setAttribute('y2',b.y);
+          line.setAttribute('stroke','rgba(239,68,68,0.45)'); line.setAttribute('stroke-width','1.5');
+          line.setAttribute('stroke-dasharray','4 3');
+          svg.appendChild(line);
+        }
+      }
+    }
+  });
+  canvas.insertBefore(svg, canvas.firstChild);
+
+  // Ring summary cards
+  rings.forEach(([fp, userSet]) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'padding:.8rem 1rem;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:10px;font-size:.78rem';
+    card.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem"><strong style="color:var(--red)">Fraud Ring Detected</strong><span class="badge badge-fraud">CRITICAL</span></div>
+    <div style="color:#94a3b8">Device Fingerprint: <span class="mono" style="color:var(--blue)">${fp.substring(0,16)}…</span></div>
+    <div style="color:#94a3b8;margin-top:.3rem">Linked Accounts: ${[...userSet].length}</div>`;
+    ringsList.appendChild(card);
+  });
+  lucide.createIcons();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CASE MODAL
+// ═══════════════════════════════════════════════════════════════
+function openCase(txId) {
+  const tx = DB.getTxs().find(t=>t.id===txId);
+  if (!tx) return;
+  STATE.currentCaseTxId = txId;
+
+  el('modal-tx-id').textContent = 'TX-'+(10000+txId);
+  el('modal-details').innerHTML = `
+    <dt>Amount</dt><dd>${fmt(tx.amount)}</dd>
+    <dt>Status</dt><dd>${tx.status}</dd>
+    <dt>Merchant</dt><dd>${esc(tx.merchant)}</dd>
+    <dt>Location</dt><dd>${esc(tx.location)||'—'}</dd>
+    <dt>IP Address</dt><dd>${esc(tx.ipAddress)||'—'}</dd>
+    <dt>Device FP</dt><dd>${tx.deviceFingerprint?tx.deviceFingerprint.substring(0,20)+'…':'—'}</dd>
+    <dt>Case Status</dt><dd>${tx.caseStatus||'OPEN'}</dd>
+    <dt>Fraud Score</dt><dd style="color:${scoreColor(tx.status)}">${Math.round((tx.fraudScore||0)*100)}%</dd>
+    ${tx.shadowScore!=null?`<dt>Shadow Score</dt><dd class="mono">${Math.round(tx.shadowScore*100)}%</dd>`:''}
+    <dt>Created</dt><dd>${new Date(tx.createdAt).toLocaleString()}</dd>`;
+
+  // Reason codes
+  const reasons = tx.reasonCodes || [];
+  el('modal-reasons').innerHTML = reasons.length
+    ? `<div class="reason-list">${reasons.map(r => {
+        // COMPOSITE_SCORE line is informational — colour based on its own risk label
+        if (r.startsWith('COMPOSITE_SCORE')) {
+          const cls = r.includes('HIGH RISK') ? 'reason-high' : r.includes('MEDIUM RISK') ? 'reason-med' : 'reason-low';
+          return `<div class="reason-pill ${cls}">${esc(r)}</div>`;
+        }
+        const cls = r.includes('EXTREME')||r.includes('VERY_HIGH')||r.includes('HIGH_')||r.includes('IMPOSSIBLE')||r.includes('BLACKLIST')||r.includes('BLOCK') ? 'reason-high'
+                  : r.includes('MEDIUM')||r.includes('VELOCITY')||r.includes('BIOMETRIC')||r.includes('DEVICE')||r.includes('CRYPTO')||r.includes('GAMBLING')||r.includes('RISKY') ? 'reason-med'
+                  : 'reason-low';
+        return `<div class="reason-pill ${cls}">${esc(r)}</div>`;
+      }).join('')}</div>`
+    : '<p style="font-size:.78rem;color:#475569">No reason codes available.</p>';
+
+  // Intelligence signals
+  const bio = tx.biometricSignal || {};
+  el('modal-signals').innerHTML = `
+    <div style="background:var(--blue-dim);padding:.7rem;border-radius:8px;border:1px solid rgba(56,189,248,.1)">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);margin-bottom:.4rem;font-weight:700">Biometric</div>
+      <div style="font-size:.75rem;color:#94a3b8">Mouse Vel: ${bio.mouseVelocityAvg?Math.round(bio.mouseVelocityAvg)+'px/s':'—'}</div>
+      <div style="font-size:.75rem;color:#94a3b8">Typing: ${bio.typingCadenceAvg?Math.round(bio.typingCadenceAvg)+'ms/key':'—'}</div>
+      <div style="font-size:.75rem;color:#94a3b8">Clicks: ${bio.clickCount||0} · Session: ${bio.sessionDurationMs?Math.round(bio.sessionDurationMs)+'ms':'—'}</div>
+      <div style="margin-top:.35rem;font-size:.75rem;font-weight:700;color:${(tx.biometricScore||0)>0.3?'var(--red)':'var(--green)'}">Risk: ${Math.round((tx.biometricScore||0)*100)}%</div>
+    </div>
+    <div style="background:var(--gold-dim);padding:.7rem;border-radius:8px;border:1px solid rgba(234,179,8,.1)">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--gold);margin-bottom:.4rem;font-weight:700">Device Intelligence</div>
+      <div style="font-size:.75rem;color:#94a3b8">FP Hash: <span class="mono">${(tx.deviceFingerprint||'—').substring(0,12)}</span></div>
+      <div style="font-size:.75rem;color:#94a3b8">Device Risk: <span style="font-weight:700;color:${(tx.deviceScore||0)>0.3?'var(--red)':'var(--green)'}">${Math.round((tx.deviceScore||0)*100)}%</span></div>
+      <div style="font-size:.75rem;color:#94a3b8">Velocity 1m: ${tx.velocityCount||0} txs</div>
+    </div>`;
+
+  const vel1m = tx.velocityCount || 0;
+  el('modal-velocity').innerHTML = `
+    <div style="text-align:center;padding:.6rem;background:var(--navy2);border-radius:8px">
+      <div class="mono fw-800" style="font-size:1.4rem;color:${vel1m>=5?'var(--red)':vel1m>=2?'var(--amber)':'var(--green)'}">${vel1m}</div>
+      <div style="font-size:.68rem;color:#64748b;margin-top:.2rem">Per 60 sec</div>
+    </div>
+    <div style="text-align:center;padding:.6rem;background:var(--navy2);border-radius:8px">
+      <div class="mono fw-800" style="font-size:1.4rem;color:var(--blue)">${DB.getTxs().filter(t=>t.userId===tx.userId&&(Date.now()-new Date(t.createdAt).getTime())<300000).length}</div>
+      <div style="font-size:.68rem;color:#64748b;margin-top:.2rem">Per 5 min</div>
+    </div>
+    <div style="text-align:center;padding:.6rem;background:var(--navy2);border-radius:8px">
+      <div class="mono fw-800" style="font-size:1.4rem;color:var(--blue)">${DB.getTxs().filter(t=>t.userId===tx.userId&&(Date.now()-new Date(t.createdAt).getTime())<3600000).length}</div>
+      <div style="font-size:.68rem;color:#64748b;margin-top:.2rem">Per hour</div>
+    </div>`;
+
+  el('modal-note').value = tx.caseNote || '';
+
+  // Disable resolve if already resolved
+  const resolved = tx.caseStatus && tx.caseStatus !== 'OPEN';
+  el('modal-legit').disabled = resolved;
+  el('modal-fraud').disabled = resolved;
+
+  el('case-modal').classList.add('open');
+  lucide.createIcons();
+}
+
+function closeModal() {
+  el('case-modal').classList.remove('open');
+  STATE.currentCaseTxId = null;
+}
+
+function resolveCase(resolution) {
+  const txId = STATE.currentCaseTxId;
+  if (!txId) return;
+  const session = DB.getSession();
+  const all = DB.getTxs();
+  const tx = all.find(t=>t.id===txId);
+  if (!tx) return;
+
+  tx.caseStatus   = resolution;
+  tx.resolvedBy   = session ? session.username : 'ANALYST';
+  tx.resolvedAt   = new Date().toISOString();
+  tx.caseNote     = el('modal-note').value;
+  if (resolution === 'FALSE_POSITIVE') tx.status = 'APPROVED';
+  DB.saveTxs(all);
+
+  addAudit('CASE_RESOLVED', tx.userId, txId, 'Case marked as: ' + resolution, tx.resolvedBy);
+  toast(resolution==='CONFIRMED_FRAUD'?'🚨 Case confirmed as FRAUD':'✅ Case cleared as legitimate', resolution==='CONFIRMED_FRAUD'?'err':'ok');
+  closeModal();
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SHADOW TOGGLE
+// ═══════════════════════════════════════════════════════════════
+function toggleShadow() {
+  STATE.shadowMode = !STATE.shadowMode;
+  renderShadow();
+  toast(STATE.shadowMode ? '👁 Shadow Mode ENABLED — parallel scoring active' : '👁 Shadow Mode DISABLED', 'info');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DEVICE UI
+// ═══════════════════════════════════════════════════════════════
+function updateDeviceUI() {
+  const session = DB.getSession();
+  const fp = getDeviceFingerprint(session ? session.username : '', 'unique');
+  scoreDeviceRisk(fp);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+function paintTable(bodyId, emptyId, wrapId, rows, rowFn, doLucide) {
+  const tbody = el(bodyId), empty = el(emptyId), wrap = el(wrapId);
+  if (!rows.length) { empty.style.display='flex'; wrap.style.display='none'; return; }
+  empty.style.display='none'; wrap.style.display='block';
+  tbody.innerHTML = rows.map(rowFn).join('');
+  if (doLucide) lucide.createIcons();
+}
+
+function badgeHTML(status) {
+  const map = {
+    APPROVED:   ['badge-approved','check-circle'],
+    SUSPICIOUS: ['badge-suspicious','alert-circle'],
+    FRAUD:      ['badge-fraud','flame'],
+    PENDING:    ['badge-pending','clock'],
+  };
+  const [cls, icon] = map[status] || ['badge-pending','clock'];
+  return `<span class="badge ${cls}"><i data-lucide="${icon}" style="width:10px;height:10px"></i>${status}</span>`;
+}
+
+function scoreColor(status) {
+  return status==='FRAUD'?'var(--red)':status==='SUSPICIOUS'?'var(--amber)':status==='APPROVED'?'var(--green)':'var(--blue)';
+}
+
+function fmt(v){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(v)||0); }
+function esc(s){ return s?s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''; }
+function timeAgo(iso){
+  const d=(Date.now()-new Date(iso).getTime())/1000;
+  if(d<60) return Math.round(d)+'s ago';
+  if(d<3600) return Math.round(d/60)+'m ago';
+  return Math.round(d/3600)+'h ago';
+}
+function el(id){ return document.getElementById(id); }
+function val(id){ return (el(id).value||'').trim(); }
+function showAlert(divId,msgId,msg){ el(msgId).textContent=msg; el(divId).classList.add('show'); setTimeout(()=>el(divId).classList.remove('show'),4000); }
+
+function toast(msg, type='ok') {
+  const wrap = el('toasts');
+  const t = document.createElement('div');
+  const map={ok:'toast-ok',err:'toast-err',warn:'toast-warn',info:'toast-info'};
+  t.className='toast '+(map[type]||'toast-ok');
+  t.innerHTML=`<i data-lucide="${type==='ok'?'check-circle':type==='err'?'alert-triangle':type==='warn'?'alert-circle':'info'}" style="width:14px;height:14px;flex-shrink:0"></i>${msg}`;
+  wrap.appendChild(t);
+  lucide.createIcons();
+  setTimeout(()=>t.remove(), 5000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BIOMETRIC EVENT LISTENERS
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('mousemove', e => Bio.onMouseMove(e));
+document.addEventListener('keydown',   e => Bio.onKeydown(e));
+document.addEventListener('click',     e => Bio.onClick(e));
+
+// Close modal on overlay click
+el('case-modal').addEventListener('click', e => { if(e.target===el('case-modal')) closeModal(); });
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+lucide.createIcons();
+
+// ── Migration: Re-score all historical transactions to ensure correctness ──
+(function migrateScores() {
+  const txs = DB.getTxs();
+  let migrated = false;
+  txs.forEach(t => {
+    const res = scoreFraud(t, t.userId);
+    if (t.fraudScore !== res.final || t.status !== res.status) {
+      t.fraudScore    = res.final;
+      t.status        = res.status;
+      t.reasonCodes   = res.reasons;
+      t.velocityCount = res.velCount;
+      t.shadowScore   = res.shadowScore;
+      t.shadowStatus  = res.shadowStatus;
+      t.shadowDiverged= res.shadowDiverged;
+      migrated = true;
+    }
+  });
+  if (migrated) {
+    DB.saveTxs(txs);
+  }
+})();
+
+const session = DB.getSession();
+if (session) {
+  el('dash-user').textContent = session.username.toUpperCase();
+  go('dashboard');
+}
+
+// Auto-refresh stats + transactions every 30s
+setInterval(() => {
+  if (el('view-dashboard').classList.contains('active')) renderAll();
+}, 30000);
+</script>
+</body>
+</html>

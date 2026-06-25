@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aether Guardian | Fraud Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    :root {
+      --midnight: #020617;
+      --navy: #1E293B;
+      --cyber-blue: #38BDF8;
+      --gold: #EAB308;
+      --neon-green: #10B981;
+      --amber: #F59E0B;
+      --ruby-red: #B91C1C;
+      --font-main: 'Outfit', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--midnight);
+      color: white;
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 2rem;
+    }
+
+    /* Glassmorphism Card */
+    .card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: all 0.3s ease;
+    }
+
+    .card-gold {
+      border-color: rgba(234, 179, 8, 0.15);
+    }
+
+    .card-blue {
+      border-color: rgba(56, 189, 248, 0.15);
+    }
+
+    .glow-hover:hover {
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    /* Forms */
+    .auth-container {
+      max-width: 420px;
+      margin: 80px auto;
+      padding: 2.5rem;
+      position: relative;
+    }
+
+    .top-bar-indicator {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .indicator-blue {
+      background: var(--cyber-blue);
+      box-shadow: 0 0 10px var(--cyber-blue);
+    }
+
+    .indicator-gold {
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: gray;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: gray;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border-radius: 8px;
+      background: var(--midnight);
+      border: 1px solid var(--navy);
+      color: white;
+      outline: none;
+      font-family: var(--font-main);
+      font-size: 0.9rem;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: var(--cyber-blue);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 8px;
+      background: var(--cyber-blue);
+      color: var(--midnight);
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-family: var(--font-main);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.02);
+      background: white;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+    }
+
+    .btn-gold:hover {
+      background: #fef08a;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
+    }
+
+    .stat-icon {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: rgba(255, 255, 255, 0.08);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: gray;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* Layout Split */
+    .split-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Alerts */
+    .alert {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.85rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
+    }
+
+    .alert-error {
+      color: var(--ruby-red);
+      background: rgba(185, 28, 28, 0.1);
+      border: 1px solid rgba(185, 28, 28, 0.25);
+    }
+
+    .alert-success {
+      color: var(--neon-green);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    /* Table styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      border-bottom: 1px solid var(--navy);
+      color: gray;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.85rem;
+    }
+
+    td {
+      padding: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .badge-pending {
+      color: var(--cyber-blue);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .badge-approved {
+      color: var(--neon-green);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-suspicious {
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .badge-fraud {
+      color: var(--ruby-red);
+      background: rgba(185, 28, 28, 0.1);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .pulse-animation {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-top: 2px solid #000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .spinner-white {
+      border-top-color: white;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+    }
+
+    .view-active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- ==================== LOGIN VIEW ==================== -->
+    <div id="view-login" class="view-section view-active">
+      <div class="card auth-container animate-fade">
+        <div class="top-bar-indicator indicator-blue"></div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; mb-8; margin-bottom: 2rem;">
+          <div style="background: rgba(56, 189, 248, 0.1); padding: 1rem; border-radius: 50%; border: 1px solid rgba(56, 189, 248, 0.3); margin-bottom: 1rem; color: var(--cyber-blue)">
+            <i data-lucide="fingerprint" style="width: 36px; height: 36px; filter: drop-shadow(0 0 5px var(--cyber-blue));"></i>
+          </div>
+          <h1 style="color: var(--gold); font-size: 1.75rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.25rem; text-align: center;">IDENTITY PORTAL</h1>
+          <p style="color: var(--cyber-blue); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.8; text-align: center;">AETHER GUARDIAN AUTHENTICATION</p>
+        </div>
+
+        <div id="login-error-alert" class="alert alert-error" style="display: none;">
+          <i data-lucide="alert-triangle" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+          <span id="login-error-msg"></span>
+        </div>
+
+        <form id="login-form">
+          <div>
+            <label>Operative Username</label>
+            <div class="input-wrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="login-username" placeholder="Enter username" required>
+            </div>
+          </div>
+
+          <div>
+            <label>Security Passphrase</label>
+            <div class="input-wrapper">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <button type="submit" id="login-submit" class="btn-primary">
+            <i data-lucide="shield-check"></i>
+            <span>Initialize Session</span>
+          </button>
+        </form>
+
+        <p style="margin-top: 2rem; text-align: center; font-size: 0.85rem; color: gray;">
+          New Operative? <span onclick="switchView('signup')" style="color: var(--cyber-blue); cursor: pointer; font-weight: 600; text-decoration: underline;">Register Identity</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== SIGNUP VIEW ==================== -->
+    <div id="view-signup" class="view-section">
+      <div class="card auth-container animate-fade">
+        <div class="top-bar-indicator indicator-gold"></div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
+          <div style="background: rgba(234, 179, 8, 0.1); padding: 1rem; border-radius: 50%; border: 1px solid rgba(234, 179, 8, 0.3); margin-bottom: 1rem; color: var(--gold)">
+            <i data-lucide="user-plus" style="width: 36px; height: 36px; filter: drop-shadow(0 0 5px var(--gold));"></i>
+          </div>
+          <h1 style="color: var(--gold); font-size: 1.75rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.25rem; text-align: center;">NEW DEPLOYMENT</h1>
+          <p style="color: var(--cyber-blue); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.8; text-align: center;">CREATE SECURE OPERATIVE PROFILE</p>
+        </div>
+
+        <div id="signup-error-alert" class="alert alert-error" style="display: none;">
+          <i data-lucide="shield-alert" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+          <span id="signup-error-msg"></span>
+        </div>
+
+        <div id="signup-success-alert" class="alert alert-success" style="display: none;">
+          <i data-lucide="check-circle" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+          <span>Operative registered. Redirecting to login portal...</span>
+        </div>
+
+        <form id="signup-form">
+          <div>
+            <label>Operative Username *</label>
+            <div class="input-wrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="signup-username" placeholder="e.g. agent_k" required>
+            </div>
+          </div>
+
+          <div>
+            <label>Secure Email *</label>
+            <div class="input-wrapper">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="signup-email" placeholder="john@agency.gov" required>
+            </div>
+          </div>
+
+          <div>
+            <label>Contact Number</label>
+            <div class="input-wrapper">
+              <i data-lucide="phone" class="input-icon"></i>
+              <input type="text" id="signup-phone" placeholder="+1 (555) 123-4567">
+            </div>
+          </div>
+
+          <div>
+            <label>Security Passphrase *</label>
+            <div class="input-wrapper">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="signup-password" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <button type="submit" id="signup-submit" class="btn-primary">
+            <i data-lucide="user-plus"></i>
+            <span>Finalize Authorization</span>
+          </button>
+        </form>
+
+        <p style="margin-top: 2rem; text-align: center; font-size: 0.85rem; color: gray;">
+          Already cleared? <span onclick="switchView('login')" style="color: var(--cyber-blue); cursor: pointer; font-weight: 600; text-decoration: underline;">Access Portal</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== DASHBOARD VIEW ==================== -->
+    <div id="view-dashboard" class="view-section">
+      <header style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1.5rem;" class="animate-fade">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="background: rgba(234, 179, 8, 0.1); padding: 0.75rem; border-radius: 12px; border: 1px solid rgba(234, 179, 8, 0.3); color: var(--gold);">
+            <i data-lucide="shield" style="width: 28px; height: 28px; filter: drop-shadow(0 0 5px var(--gold));"></i>
+          </div>
+          <div>
+            <h1 style="color: var(--gold); font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; line-height: 1.2;">AETHER GUARDIAN</h1>
+            <p style="color: var(--cyber-blue); font-size: 0.75rem; letter-spacing: 1px; font-weight: 600;">CONSOLIDATED SECURE DATA STREAM</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div style="padding: 0.5rem 1rem; background: var(--navy); border-left: 3px solid var(--cyber-blue); border-radius: 4px; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.7rem; color: gray; font-weight: bold;">OPERATIVE:</span>
+            <span id="session-username" style="color: #fff; font-size: 0.8rem; font-weight: bold;">GUEST_DEV</span>
+          </div>
+          <button onclick="handleLogout()" style="padding: 0.5rem 1rem; background: rgba(185,28,28,0.1); border: 1px solid var(--ruby-red); color: var(--ruby-red); border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 0.4rem; transition: all 0.3s ease;">
+            <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+            <span>Term Session</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid animate-fade">
+        <div class="card stat-card glow-hover">
+          <div class="stat-icon"><i data-lucide="activity" style="width: 20px; height: 20px;"></i></div>
+          <p class="stat-label">Network Health</p>
+          <h2 class="stat-value" style="color: var(--cyber-blue);">99.9%</h2>
+        </div>
+        <div class="card stat-card glow-hover">
+          <div class="stat-icon"><i data-lucide="dollar-sign" style="width: 20px; height: 20px;"></i></div>
+          <p class="stat-label">Protected Vol.</p>
+          <h2 id="metric-amount" class="stat-value" style="color: var(--gold);">$0.00</h2>
+        </div>
+        <div class="card stat-card glow-hover">
+          <div class="stat-icon"><i data-lucide="percent" style="width: 20px; height: 20px;"></i></div>
+          <p class="stat-label">Operative Trust</p>
+          <h2 id="metric-trust" class="stat-value" style="color: var(--gold);">100/100</h2>
+        </div>
+        <div class="card stat-card glow-hover">
+          <div class="stat-icon"><i data-lucide="flame" style="width: 20px; height: 20px;"></i></div>
+          <p class="stat-label">Threats Blocked</p>
+          <h2 id="metric-threats" class="stat-value" style="color: var(--ruby-red);">0</h2>
+        </div>
+      </div>
+
+      <!-- Split Layout -->
+      <div class="split-layout animate-fade">
+        <!-- Simulator -->
+        <div class="card card-gold">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+            <i data-lucide="terminal" style="color: var(--gold); width: 20px; height: 20px;"></i>
+            <h3 style="color: var(--gold); font-size: 1.1rem; font-weight: 700;">Ingestion Simulator</h3>
+          </div>
+          <p style="font-size: 0.8rem; color: gray; margin-bottom: 1.5rem; line-height: 1.4;">
+            Dispatch simulated transactions instantly to test rules parsing, ML probability modeling, and DB updates.
+          </p>
+
+          <div id="sim-error-alert" class="alert alert-error" style="display: none;">
+            <i data-lucide="alert-circle" style="width: 14px; height: 14px; flex-shrink: 0;"></i>
+            <span id="sim-error-msg"></span>
+          </div>
+
+          <div id="sim-success-alert" class="alert alert-success" style="display: none;">
+            <i data-lucide="check-circle" style="width: 14px; height: 14px; flex-shrink: 0;"></i>
+            <span>Transaction ingested. Dispatched in-memory.</span>
+          </div>
+
+          <form id="simulator-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label>Amount ($)</label>
+                <div class="input-wrapper">
+                  <i data-lucide="dollar-sign" class="input-icon" style="width: 14px; height: 14px;"></i>
+                  <input type="number" step="0.01" id="sim-amount" placeholder="2500" required style="padding-left: 2rem;">
+                </div>
+              </div>
+              <div>
+                <label>Location</label>
+                <div class="input-wrapper">
+                  <i data-lucide="map-pin" class="input-icon" style="width: 14px; height: 14px;"></i>
+                  <input type="text" id="sim-location" placeholder="New York, USA" style="padding-left: 2rem;">
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label>Merchant Name</label>
+              <div class="input-wrapper">
+                <i data-lucide="shopping-bag" class="input-icon" style="width: 14px; height: 14px;"></i>
+                <input type="text" id="sim-merchant" placeholder="e.g. CryptoXchange, Starbucks" style="padding-left: 2rem;">
+              </div>
+            </div>
+
+            <button type="submit" id="sim-submit" class="btn-primary btn-gold">
+              <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+              <span>Ingest Transaction</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Node Config -->
+        <div class="card card-blue">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.2rem;">
+            <i data-lucide="cpu" style="color: var(--cyber-blue); width: 20px; height: 20px;"></i>
+            <h3 style="color: var(--cyber-blue); font-size: 1.1rem; font-weight: 700;">Active Node Config</h3>
+          </div>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tbody>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05)">
+                <td style="padding: 0.75rem 0; color: gray; font-weight: 500;">Database Engine</td>
+                <td style="text-align: right; color: var(--neon-green); font-weight: 700;">H2/Postgres (Active)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05)">
+                <td style="padding: 0.75rem 0; color: gray; font-weight: 500;">Streaming Engine</td>
+                <td style="text-align: right; color: var(--neon-green); font-weight: 700;">Kafka/Spring Bus (Active)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05)">
+                <td style="padding: 0.75rem 0; color: gray; font-weight: 500;">Controller Endpoint</td>
+                <td style="text-align: right; color: #fff; font-family: monospace;">POST /api/transactions</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem 0; color: gray; font-weight: 500;">Engine Mode</td>
+                <td style="text-align: right; color: #fff;">Async rules daemon background scoring</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top: 1.5rem; padding: 0.75rem; background: rgba(56,189,248,0.05); border-radius: 8px; border: 1px solid rgba(56,189,248,0.1); display: flex; gap: 0.5rem; align-items: center;">
+            <div style="width: 8px; height: 8px; background: var(--neon-green); border-radius: 50%; box-shadow: 0 0 5px var(--neon-green);"></div>
+            <span style="font-size: 0.75rem; color: var(--cyber-blue); font-weight: 600;">NODE STREAM: ONLINE & ANALYZING</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Stream -->
+      <div class="card card-blue animate-fade">
+        <h3 style="margin-bottom: 1.25rem; color: var(--cyber-blue); font-size: 1.1rem; font-weight: 700;">Live Transaction Stream</h3>
+        <div id="live-stream-placeholder" style="text-align: center; color: gray; padding: 3rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+          <i data-lucide="activity" class="pulse-animation" style="width: 24px; height: 24px;"></i>
+          <p style="font-size: 0.85rem;">Awaiting transactions... Dispatch one using the Ingestion Simulator.</p>
+        </div>
+        <div id="live-stream-table-wrapper" style="overflow-x: auto; display: none;">
+          <table>
+            <thead>
+              <tr style="border-bottom: 1px solid var(--navy); color: gray; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                <th style="padding: 0.85rem;">ID</th>
+                <th>MERCHANT</th>
+                <th>LOCATION</th>
+                <th>AMOUNT</th>
+                <th>STATUS</th>
+                <th>PROBABILITY</th>
+              </tr>
+            </thead>
+            <tbody id="transaction-rows">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State management
+    let activeView = 'login';
+    let currentUser = null;
+    let pollInterval = null;
+
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+
+    // View Routing
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('view-active'));
+      document.getElementById(`view-${viewId}`).classList.add('view-active');
+      activeView = viewId;
+
+      if (viewId === 'dashboard') {
+        document.getElementById('session-username').innerText = currentUser.username.toUpperCase();
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    }
+
+    function startPolling() {
+      fetchData();
+      if (pollInterval) clearInterval(pollInterval);
+      pollInterval = setInterval(fetchData, 1500);
+    }
+
+    function stopPolling() {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+    }
+
+    // Auth Handlers
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorAlert = document.getElementById('login-error-alert');
+      const submitBtn = document.getElementById('login-submit');
+      
+      errorAlert.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<div class="spinner spinner-white"></div><span>Verifying Operative...</span>`;
+
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          currentUser = data;
+          switchView('dashboard');
+        } else {
+          document.getElementById('login-error-msg').innerText = data.error || 'Access Denied: Invalid credentials';
+          errorAlert.style.display = 'flex';
+        }
+      } catch (err) {
+        document.getElementById('login-error-msg').innerText = 'System Error: Connection failed. Ensure Spring Boot is running.';
+        errorAlert.style.display = 'flex';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="shield-check"></i><span>Initialize Session</span>`;
+        lucide.createIcons();
+      }
+    });
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorAlert = document.getElementById('signup-error-alert');
+      const successAlert = document.getElementById('signup-success-alert');
+      const submitBtn = document.getElementById('signup-submit');
+
+      errorAlert.style.display = 'none';
+      successAlert.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<div class="spinner spinner-white"></div><span>Deploying Operative...</span>`;
+
+      const username = document.getElementById('signup-username').value;
+      const email = document.getElementById('signup-email').value;
+      const phone = document.getElementById('signup-phone').value;
+      const password = document.getElementById('signup-password').value;
+
+      try {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+            phone: phone || '+1234567890'
+          })
+        });
+
+        const responseText = await response.text();
+
+        if (response.ok) {
+          successAlert.style.display = 'flex';
+          document.getElementById('signup-username').value = '';
+          document.getElementById('signup-email').value = '';
+          document.getElementById('signup-phone').value = '';
+          document.getElementById('signup-password').value = '';
+          setTimeout(() => {
+            switchView('login');
+          }, 2000);
+        } else {
+          document.getElementById('signup-error-msg').innerText = responseText || 'Failed to complete registration';
+          errorAlert.style.display = 'flex';
+        }
+      } catch (err) {
+        document.getElementById('signup-error-msg').innerText = 'System Error: Connection failed. Ensure Spring Boot is running.';
+        errorAlert.style.display = 'flex';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="user-plus"></i><span>Finalize Authorization</span>`;
+        lucide.createIcons();
+      }
+    });
+
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+      switchView('login');
+    }
+
+    // Simulator Handler
+    document.getElementById('simulator-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorAlert = document.getElementById('sim-error-alert');
+      const successAlert = document.getElementById('sim-success-alert');
+      const submitBtn = document.getElementById('sim-submit');
+
+      errorAlert.style.display = 'none';
+      successAlert.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<div class="spinner spinner-white"></div><span>Processing Ingestion...</span>`;
+
+      const amount = parseFloat(document.getElementById('sim-amount').value);
+      const merchant = document.getElementById('sim-merchant').value || 'Simulated Merchant';
+      const location = document.getElementById('sim-location').value || 'Simulated Terminal';
+      const userId = currentUser ? currentUser.id : 1;
+
+      try {
+        const response = await fetch('/api/transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, amount, merchant, location })
+        });
+
+        if (response.ok) {
+          successAlert.style.display = 'flex';
+          document.getElementById('sim-amount').value = '';
+          document.getElementById('sim-merchant').value = '';
+          document.getElementById('sim-location').value = '';
+          fetchData(); // immediately fetch
+        } else {
+          const errorText = await response.text();
+          document.getElementById('sim-error-msg').innerText = errorText || 'Simulation failed';
+          errorAlert.style.display = 'flex';
+        }
+      } catch (err) {
+        document.getElementById('sim-error-msg').innerText = 'Failed to connect to backend engine.';
+        errorAlert.style.display = 'flex';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="send"></i><span>Ingest Transaction</span>`;
+        lucide.createIcons();
+      }
+    });
+
+    // Formatting utilities
+    function formatCurrency(val) {
+      try {
+        const num = Number(val);
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(isNaN(num) ? 0 : num);
+      } catch (e) {
+        return '$0.00';
+      }
+    }
+
+    // Main fetch loop
+    async function fetchData() {
+      try {
+        // Fetch list of transactions
+        const txResponse = await fetch('/api/transactions');
+        if (txResponse.ok) {
+          const transactions = await txResponse.json();
+          renderTransactions(transactions);
+        }
+
+        // Fetch metrics
+        const metricsResponse = await fetch('/api/transactions/metrics');
+        if (metricsResponse.ok) {
+          const metrics = await metricsResponse.json();
+          renderMetrics(metrics);
+        }
+      } catch (error) {
+        console.error('Error fetching stream data:', error);
+      }
+    }
+
+    function renderMetrics(metrics) {
+      document.getElementById('metric-amount').innerText = formatCurrency(metrics.totalAmountProtected || 0);
+      document.getElementById('metric-trust').innerText = `${metrics.trustScore || 100}/100`;
+      document.getElementById('metric-threats').innerText = Number(metrics.threatsBlocked || 0).toLocaleString();
+    }
+
+    function renderTransactions(transactions) {
+      const placeholder = document.getElementById('live-stream-placeholder');
+      const tableWrapper = document.getElementById('live-stream-table-wrapper');
+      const tbody = document.getElementById('transaction-rows');
+
+      if (!transactions || transactions.length === 0) {
+        placeholder.style.display = 'flex';
+        tableWrapper.style.display = 'none';
+        return;
+      }
+
+      placeholder.style.display = 'none';
+      tableWrapper.style.display = 'block';
+
+      tbody.innerHTML = '';
+      transactions.forEach(tx => {
+        let badgeClass = 'badge-pending';
+        let statusIcon = 'clock';
+        let statusLabel = 'PENDING';
+        let threatColor = 'var(--cyber-blue)';
+        let scoreLabel = '---';
+
+        if (tx.status === 'APPROVED') {
+          badgeClass = 'badge-approved';
+          statusIcon = 'check-circle';
+          statusLabel = 'APPROVED';
+          threatColor = 'var(--neon-green)';
+          scoreLabel = `${Math.round((tx.fraudScore || 0) * 100)}%`;
+        } else if (tx.status === 'SUSPICIOUS') {
+          badgeClass = 'badge-suspicious';
+          statusIcon = 'alert-circle';
+          statusLabel = 'SUSPICIOUS';
+          threatColor = 'var(--amber)';
+          scoreLabel = `${Math.round((tx.fraudScore || 0) * 100)}%`;
+        } else if (tx.status === 'FRAUD') {
+          badgeClass = 'badge-fraud';
+          statusIcon = 'flame';
+          statusLabel = 'FRAUD';
+          threatColor = 'var(--ruby-red)';
+          scoreLabel = `${Math.round((tx.fraudScore || 0) * 100)}%`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.03)';
+        tr.style.fontSize = '0.85rem';
+        tr.style.transition = 'background 0.2s';
+        
+        tr.innerHTML = `
+          <td style="padding: 0.85rem; color: var(--cyber-blue); font-weight: 600; font-family: monospace;">TX-${10000 + tx.id}</td>
+          <td style="font-weight: 500;">${escapeHtml(tx.merchant)}</td>
+          <td style="color: #cbd5e1;">${escapeHtml(tx.location)}</td>
+          <td style="font-weight: 700; color: #f8fafc;">${formatCurrency(tx.amount)}</td>
+          <td>
+            <div class="badge ${badgeClass}" style="box-shadow: 0 0 5px ${threatColor}15">
+              <i data-lucide="${statusIcon}" style="width: 14px; height: 14px; margin-right: 4px; ${tx.status === 'PENDING' ? 'animation: pulse 1s infinite' : ''}"></i>
+              <span>${statusLabel}</span>
+            </div>
+          </td>
+          <td style="font-family: monospace; font-weight: bold; color: ${threatColor};">${scoreLabel}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

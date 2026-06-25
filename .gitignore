@@ -1,0 +1,79 @@
+# ── Secrets & Environment ───────────────────────────────────────
+.env
+.env.*
+*.secret
+secrets.properties
+application-prod.properties
+application-local.properties
+
+# ── Java / Maven ─────────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+hs_err_pid*
+replay_pid*
+
+# ── Python ───────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+pip-wheel-metadata/
+.python-version
+fraud_model.json
+
+# ── Node / npm ───────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm/
+
+# ── IDEs & Editors ───────────────────────────────────────────────
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# ── OS Files ─────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── Logs & Temp ──────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+cmd_log.txt
+powershell.cmd

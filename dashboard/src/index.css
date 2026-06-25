@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+  --midnight: #020617;
+  --navy: #1E293B;
+  --cyber-blue: #38BDF8;
+  --gold: #EAB308;
+  --neon-green: #10B981;
+  --amber: #F59E0B;
+  --ruby-red: #B91C1C;
+  
+  --font-main: 'Outfit', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--midnight);
+  color: white;
+  font-family: var(--font-main);
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Cards */
+.card {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px var(--cyber-blue); }
+  50% { box-shadow: 0 0 20px var(--cyber-blue); }
+  100% { box-shadow: 0 0 5px var(--cyber-blue); }
+}
+
+.animate-fade {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.glow-hover:hover {
+  animation: glow 1.5s infinite;
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--cyber-blue);
+  color: var(--midnight);
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  background: white;
+}
+
+/* Inputs */
+input {
+  background: var(--midnight);
+  border: 1px solid var(--navy);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: var(--cyber-blue);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.badge-approved {
+  color: var(--neon-green);
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+.badge-suspicious {
+  color: var(--amber);
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+.badge-fraud {
+  color: var(--ruby-red);
+  background: rgba(185, 28, 28, 0.1);
+  border-color: rgba(185, 28, 28, 0.2);
+}
+.badge-pending {
+  color: var(--cyber-blue);
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+/* Toasts */
+.toast-wrap {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 9999;
+}
+.toast {
+  padding: 0.65rem 1.1rem;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  backdrop-filter: blur(12px);
+  animation: fadeUp 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 380px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+.toast-ok {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--neon-green);
+}
+.toast-err {
+  background: rgba(185, 28, 28, 0.1);
+  border: 1px solid rgba(185, 28, 28, 0.2);
+  color: var(--ruby-red);
+}
+.toast-warn {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  color: var(--amber);
+}
+.toast-info {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: var(--cyber-blue);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

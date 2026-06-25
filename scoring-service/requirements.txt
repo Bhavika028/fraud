@@ -1,0 +1,7 @@
+confluent-kafka
+xgboost
+pandas
+sqlalchemy
+psycopg2-binary
+python-dotenv
+scikit-learn
