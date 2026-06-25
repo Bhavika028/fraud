@@ -34,7 +34,6 @@ venv/
 env/
 pip-wheel-metadata/
 .python-version
-fraud_model.json
 
 # ── Node / npm ───────────────────────────────────────────────────
 node_modules/

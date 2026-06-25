@@ -56,6 +56,9 @@
 
 :endDetectBaseDir
 
+@SET MAVEN_PROJECTBASEDIR_CLEAN=%MAVEN_PROJECTBASEDIR%
+@IF "%MAVEN_PROJECTBASEDIR_CLEAN:~-1%"=="\" SET MAVEN_PROJECTBASEDIR_CLEAN=%MAVEN_PROJECTBASEDIR_CLEAN:~0,-1%
+
 @IF NOT EXIST "%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.properties" (
   @ECHO Could not find .mvn\wrapper\maven-wrapper.properties
 )
@@ -110,7 +113,7 @@
 )
 
 %JAVA_CMD% ^
-  "-Dmaven.multiModuleProjectDirectory=%MAVEN_PROJECTBASEDIR%" ^
+  "-Dmaven.multiModuleProjectDirectory=%MAVEN_PROJECTBASEDIR_CLEAN%" ^
   %MAVEN_OPTS% %MAVEN_DEBUG_OPTS% ^
   -classpath %WRAPPER_JAR% ^
   "-Dmaven.home=" ^

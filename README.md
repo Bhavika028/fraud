@@ -92,51 +92,77 @@ Proper session management — logging in as a different user resets the UI state
 AetherGuardian.html
 ```
 
-### Option B — Full Backend Stack
+### Option B — Run Stack with Docker Compose (Recommended for Dev/Test)
+We provide a production-ready containerized setup including databases, message brokers, and metrics collection.
+```bash
+# Run the entire stack with Postgres, Kafka, Prometheus, Grafana & Microservices:
+docker-compose up --build
+```
+Access points:
+- **Frontend Dashboard**: Open `AetherGuardian.html` in browser.
+- **Ingestion REST API**: `http://localhost:8080`
+- **Prometheus Metrics Exporter**: `http://localhost:9090`
+- **Grafana Dashboard**: `http://localhost:3000` (Default login: `admin` / `admin`)
 
+### Option C — Standalone Local Services
 #### Prerequisites
-- Java 17+
-- Python 3.9+
-- (Optional) Apache Kafka + PostgreSQL
+- Java 17+ (JDK 24+ requires Lombok 1.18.36+)
+- Python 3.10+
+- (Optional) Local Kafka & PostgreSQL
 
-#### 1. Start the ingestion service
+#### 1. Train the ML model
+```bash
+cd scoring-service
+pip install -r requirements.txt
+python train_model.py
+```
+This trains a baseline XGBoost model and serializes it to `fraud_model.json`.
+
+#### 2. Start the ingestion service
 ```bash
 cd ingestion-service
 ./mvnw spring-boot:run
 ```
-The service starts on `http://localhost:8080` and defaults to H2 in-memory DB with mock Kafka.
+The service starts on `http://localhost:8080` and exposes Prometheus metrics at `/actuator/prometheus`.
 
-#### 2. Start the scoring service
+#### 3. Start the scoring service
 ```bash
 cd scoring-service
-pip install -r requirements.txt
-
-# Set your DB connection:
+# In production, require explicit connection strings
 export DB_URL="postgresql://user:pass@localhost:5432/fraud_db"
-
 python scoring_service.py
 ```
+Exposes Prometheus client metrics on port `8000`.
 
-#### 3. Environment Variables (Production)
+---
+
+## 🔒 Production Readiness & Security Hardening
+
+### 1. Environment Variables & Secrets Management
+Do not hardcode credentials in configuration files. Inject secrets in production via environment variables (e.g. Kubernetes Secrets, AWS Secrets Manager, or HashiCorp Vault):
 | Variable | Description |
 |----------|-------------|
 | `SPRING_DATASOURCE_URL` | PostgreSQL JDBC URL |
-| `SPRING_DATASOURCE_USERNAME` | DB username |
-| `SPRING_DATASOURCE_PASSWORD` | DB password |
-| `APP_JWT_SECRET` | JWT signing secret (min 32 chars) |
-| `APP_PII_ENCRYPTION_KEY` | Base64-encoded 256-bit AES key |
-| `DB_URL` | Python service DB URL (SQLAlchemy format) |
-| `KAFKA_ENABLED` | Set to `true` to use real Kafka |
+| `SPRING_DATASOURCE_USERNAME` | Production DB Username |
+| `SPRING_DATASOURCE_PASSWORD` | Production DB Password (must be strong) |
+| `APP_JWT_SECRET` | JWT signing secret (minimum 32 characters) |
+| `APP_PII_ENCRYPTION_KEY` | Base64-encoded 256-bit AES key for email/phone encryption |
+| `DB_URL` | SQLAlchemy Connection URL for Python service |
+| `KAFKA_USERNAME` | Kafka SASL username |
+| `KAFKA_PASSWORD` | Kafka SASL password |
+
+### 2. TLS/SSL Database & Kafka Connections
+- **PostgreSQL Connection Encryption**: Configure the JDBC URL with `ssl=true&sslmode=verify-full` and import the root CA cert. In Python `scoring_service.py`, set environment variables `DB_SSL_CA=/path/to/server-ca.pem` and `DB_SSL_MODE=verify-full`.
+- **Kafka SASL_SSL**: Secure client-broker traffic by setting `KAFKA_SECURITY_PROTOCOL=SASL_SSL` and defining the CA cert via `KAFKA_SSL_CA_LOCATION=/path/to/ca.pem`.
+
+### 3. Monitoring Metrics
+Both microservices export metrics to Prometheus:
+- **Java Ingestion Service**: Exposes core HTTP, JVM, and database connection pool metrics via Micrometer at `/actuator/prometheus` (Port `8080`).
+- **Python Scoring Service**: Exposes scoring latency, fraud decision counts, and fallback trigger counts via `prometheus-client` on Port `8000` (`/metrics`).
+- Scraping configurations are managed via `monitoring/prometheus.yml`.
 
 ---
 
-## 🔐 Security Notes
-- All passwords stored as **BCrypt hashes**
-- PII fields (email, phone) are **AES-256 encrypted** at rest
-- JWT tokens expire after 24 hours
-- No credentials are hardcoded — all secrets are loaded from environment variables
-
----
 
 ## 📁 Project Structure
 ```

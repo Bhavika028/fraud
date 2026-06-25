@@ -5,3 +5,5 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 scikit-learn
+prometheus-client
+pytest
