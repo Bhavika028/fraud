@@ -1,12 +1,19 @@
 # 🛡️ AetherGuardian — AI-Powered Fraud Detection System
 
-> A real-time, multi-layered financial fraud detection platform with a fully interactive analyst dashboard, behavioral biometrics engine, and ML-driven risk scoring.
+[![CI](https://github.com/Bhavika028/fraud/actions/workflows/ci.yml/badge.svg)](https://github.com/Bhavika028/fraud/actions) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Languages](https://img.shields.io/github/languages/top/Bhavika028/fraud)](https://github.com/Bhavika028/fraud)
+
+> One-line: AI-driven, real-time fraud detection platform with an interactive analyst dashboard, Spring Boot ingestion API, and Python XGBoost scoring.
 
 ---
 
 ## 🚀 Live Demo
 
 Open `AetherGuardian.html` directly in your browser — **no server required**. The application runs 100% client-side using LocalStorage for persistence.
+
+
+<!-- Demo GIF placeholder: replace `docs/demo.gif` with the real GIF URL or path -->
+
+![Demo placeholder](docs/demo.gif)
 
 ---
 
@@ -46,41 +53,27 @@ Proper session management — logging in as a different user resets the UI state
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────────────────�[...]
 │                    Browser (AetherGuardian.html)                │
 │   ┌──────────────┐  ┌───────────────┐  ┌───────────────────┐   │
 │   │  Auth Layer  │  │ Scoring Engine│  │  Analytics/Cases  │   │
 │   │  (LocalStorage│  │  (5 Layers)   │  │  (Live Stream)    │   │
 │   │   Sessions)  │  │               │  │                   │   │
 │   └──────────────┘  └───────────────┘  └───────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────�[...]
 
-┌─────────────────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────────────────�[...]
 │              Backend Microservices (Optional / Cloud)           │
 │   ┌──────────────────────┐   ┌────────────────────────────┐    │
 │   │  ingestion-service   │   │    scoring-service          │    │
 │   │  (Spring Boot + JPA) │──▶│    (Python + XGBoost)       │    │
 │   │  REST API + Kafka    │   │    Kafka Consumer           │    │
-│   └──────────────────────┘   └────────────────────────────┘    │
+│   └──────────────────────┘   └─────────────��──────────────┘    │
 │              │                            │                     │
 │              ▼                            ▼                     │
 │         PostgreSQL / H2           fraud_model.json              │
-└─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────�[...]
 ```
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | Vanilla HTML, CSS, JavaScript |
-| UI Components | Lucide Icons, Chart.js |
-| Backend (optional) | Spring Boot 3, Spring Security, Spring Data JPA |
-| ML Scoring (optional) | Python, XGBoost, Pandas, SQLAlchemy |
-| Messaging (optional) | Apache Kafka |
-| Database (optional) | PostgreSQL (prod) / H2 in-memory (dev) |
-| Auth | JWT + BCrypt |
 
 ---
 
@@ -152,7 +145,7 @@ Do not hardcode credentials in configuration files. Inject secrets in production
 | `KAFKA_PASSWORD` | Kafka SASL password |
 
 ### 2. TLS/SSL Database & Kafka Connections
-- **PostgreSQL Connection Encryption**: Configure the JDBC URL with `ssl=true&sslmode=verify-full` and import the root CA cert. In Python `scoring_service.py`, set environment variables `DB_SSL_CA=/path/to/server-ca.pem` and `DB_SSL_MODE=verify-full`.
+- **PostgreSQL Connection Encryption**: Configure the JDBC URL with `ssl=true&sslmode=verify-full` and import the root CA cert. In Python `scoring_service.py`, set environment variables `DB_SSL_C[...]
 - **Kafka SASL_SSL**: Secure client-broker traffic by setting `KAFKA_SECURITY_PROTOCOL=SASL_SSL` and defining the CA cert via `KAFKA_SSL_CA_LOCATION=/path/to/ca.pem`.
 
 ### 3. Monitoring Metrics
